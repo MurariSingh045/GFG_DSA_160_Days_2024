@@ -1,0 +1,139 @@
+Problem : Find All Triplets with Zero Sum
+
+link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/hashing-gfg-160/problem/find-all-triplets-with-zero-sum
+
+Problem Statement :Given an array arr[], find all possible triplets i, j, k in the arr[] whose sum of elements is equals to zero. 
+Returned triplet should also be internally sorted i.e. i<j<k.
+
+Examples:
+
+Input: arr[] = [0, -1, 2, -3, 1]
+Output: [[0, 1, 4], [2, 3, 4]]
+Explanation: Triplets with sum 0 are:
+arr[0] + arr[1] + arr[4] = 0 + (-1) + 1 = 0
+arr[2] + arr[3] + arr[4] = 2 + (-3) + 1 = 0
+
+
+Input: arr[] = [1, -2, 1, 0, 5]
+Output: [[0, 1, 2]]
+Explanation: Only triplet which satisfies the condition is arr[0] + arr[1] + arr[2] = 1 + (-2) + 1 = 0
+
+
+Input: arr[] = [2, 3, 1, 0, 5]
+Output: [[]]
+Explanation: There is no triplet with sum 0.
+
+
+Constraints:
+3 <= arr.size() <= 103
+-104 <= arr[i] <= 104
+
+
+
+/*********************************************************************************************************/
+
+
+APPROACHES TO SOLVE : 1. Brute Force : we can solve using nested loop(3 loops) 
+    steps
+   1 . we have to create a list of list to store the indices
+   2 . we run nested loop and check conditions 
+   3 . if the conditions satisfy  then we create a new temp list and add the indices 
+   4 . there after we will add the temp list in list of list
+   
+
+   TIME COMPLEXITY : O(N)
+   SPACE           : O(1)
+
+
+ CODE IS BELOW
+////////////////////////////////////
+
+ for(int i = 0; i<n; i++){
+            for(int j = i+1; j<n; j++){
+                for(int k = j+1; k<n; k++){
+                    if(arr[i] + arr[j] + arr[k] == 0){
+                        // Create a new list for every valid triplet
+                         // each time create temp list for valid triplet
+    
+                         List<Integer> temp = new ArrayList<>();
+                         temp.add(i);
+                         temp.add(j);
+                         temp.add(k);
+                         al.add(temp); // Add the triplet to the main list
+                     }
+                }
+            }
+         }
+         return al;   // TC : O(N^3) // SC : O(k) : k is no of valid triplets
+
+
+/********************************************************************************/
+
+2. OPTIMAL SOLUTION : we can solve this problem using HASHING
+
+TC : O(N^2)    // SC : O(N^2)
+
+
+
+
+ List<List<Integer>> result = new ArrayList<>();
+        int n = arr.length;
+         // Step 1: Store all pair sums and their indices in a HashMap
+        Map<Integer, List<int[]>> pairSumMap = new HashMap<>();
+        
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int sum = arr[i] + arr[j];
+                //It checks if the sum key already exists in the pairSumMap.
+//If the sum does not exist, it adds the sum key to the map with an empty ArrayList as the value.
+//If the sum already exists, it retrieves the existing ArrayList.
+
+// in lambda expression 
+//k is the key (sum).
+//If the key is absent, it creates a new ArrayList and assigns it as the value.
+         pairSumMap
+                    .computeIfAbsent(sum, k -> new ArrayList<>())
+                    // if the array list of sum present 
+                    // it will add indices (i , j)
+                    .add(new int[]{i, j});
+            }
+        }
+        
+        // we can also use below code instead of above code
+        // but above code is concise and clean 
+        // Reduces the need for explicit checks with containsKey
+        
+        // if (!pairSumMap.containsKey(sum)) {
+        //pairSumMap.put(sum, new ArrayList<>());
+        //}
+        // pairSumMap.get(sum).add(new int[]{i, j});
+        
+        
+          
+        // Step 2: Iterate over the array to find triplets
+        for (int k = 0; k < n; k++) {
+            int target = -arr[k]; // Complement sum // it is the part of triplets
+            
+            if (pairSumMap.containsKey(target)) {
+                for (int[] pair : pairSumMap.get(target)) {
+                    // Extract the indices i and j from the pair.
+                    int i = pair[0];
+                    int j = pair[1];
+                    
+                    // Validate i < j < k
+                    if (i < j && j < k) {
+                        // add triplets if it is valid
+                        List<Integer> triplet = Arrays.asList(i, j, k);
+                        if (!result.contains(triplet)) {
+                            result.add(triplet);
+                            
+                        }
+                    }
+                }
+            }
+        }
+        
+        return result;  // TC : O(N^2) // SC : O(N^2)
+
+        
+/*****************************************************************************************/
