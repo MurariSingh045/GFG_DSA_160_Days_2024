@@ -72,7 +72,7 @@ CODE BELOW
 
 
 
-TC : O(n+m)  // SC : O(min(n,m))
+TC : O(n+m)  // SC : O(n+min(n,m))
 
 // CODE id below
 
@@ -99,7 +99,7 @@ TC : O(n+m)  // SC : O(min(n,m))
         // Convert the set into  list and return
         return new ArrayList<>(resultSet);
         
-        // TC : O(n + m)  // SC : O( min(n, m))
+        // TC : O(n + m)  // SC : O(n+ min(n, m))
         
 
 /*****************************************************************************************/
