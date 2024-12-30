@@ -1,0 +1,156 @@
+Problem : Union of Arrays with Duplicates
+
+Problem Link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/hashing-gfg-160/problem/union-of-two-arrays3538
+
+
+Problem Statement : Given two arrays a[] and b[], the task is to find the number of elements in the union between these two arrays.
+
+The Union of the two arrays can be defined as the set containing distinct elements from both arrays. If there are repetitions, then only one element occurrence should be there in the union.
+
+Note: Elements of a[] and b[] are not necessarily distinct.
+
+Examples
+
+Input: a[] = [1, 2, 3, 4, 5], b[] = [1, 2, 3]
+Output: 5
+Explanation: Union set of both the arrays will be 1, 2, 3, 4 and 5. So count is 5.
+
+
+Input: a[] = [85, 25, 1, 32, 54, 6], b[] = [85, 2] 
+Output: 7
+Explanation: Union set of both the arrays will be 85, 25, 1, 32, 54, 6, and 2. So count is 7.
+
+
+Input: a[] = [1, 2, 1, 1, 2], b[] = [2, 2, 1, 2, 1] 
+Output: 2
+Explanation: We need to consider only distinct. So count of elements in union set will be 2.
+
+
+Constraints:
+1 ≤ a.size(), b.size() ≤ 106
+0 ≤ a[i], b[i] ≤ 105
+
+Company Tags: (Zoho  , Rockstand)
+
+
+/***************************************************************************************************************************************************/
+
+APPROACHES TO SOLVE : 
+
+1. BruteForce : 
+   
+steps
+1. Create a HashSet to store elements of both array and avoid duplicates because we know in Union duplicate counts only one time.
+2. iterate first Array and add each element of Array in Set
+3. iterate Second array and add each element in Set
+4. Return the size of set
+
+
+// TC : O(N)  // SC : O(N) :-> coz we are using HashSet to Store both array elements
+
+ CODE Is BElow
+////////////////
+
+int n = a.length;// size of a[]
+        int m = b.length;// size of b[]
+        // we can also use ArrayList to solve it but there is
+        // sometimes duplicate will occur
+        //ArrayList<Integer> arr = new ArrayList<>();
+        HashSet<Integer> set = new HashSet<>();// to store both array element
+        
+        for(int i = 0; i<n; i++){
+            set.add(a[i]);
+        }
+        for(int j = 0; j < m; j++){
+            set.add(b[j]);
+        }
+        return set.size(); // return the size of the set
+        // TC : O(N) // SC : O(N)
+
+
+/*********************************************************************************************************************************************************/
+
+2. Optimal : can solve it in another way also in TC : O(N+M) and SC : O(N+M)
+ 
+Steps..
+1. Create a HashSet to store elements of both array and avoid duplicates because we know in Union duplicate counts only one time.
+2. while iterating both array seperately we can iterate in single iteration
+
+
+
+
+//////////////////////////////////
+
+1. Tpye
+
+
+int n = a.length;
+        int m = b.length;
+        int left = n-1;
+        int right = 0;
+        HashSet<Integer> set = new HashSet<>();
+        while(left >= 0 &&  right < m){
+            if(a[left] < b[right]){
+                set.add(a[left]);
+                left--;
+            }
+            else{
+                set.add(b[right]);
+                right++;
+            }
+            while(left >= 0){
+                set.add(a[left]);
+                left--;
+            }
+            while(right < m){
+                set.add(b[right]);
+                right++;
+            }
+        }
+        return set.size();
+        
+        
+        // TC : O(N+M) // SC : O(N+M)
+
+
+
+****************************************************
+
+we can optimize writing of code
+
+
+
+import java.util.HashSet;
+
+class Solution {
+    public static int uniqueElementCount(int[] a, int[] b) {
+        int n = a.length;
+        int m = b.length;
+        int left = n - 1;
+        int right = 0;
+        HashSet<Integer> set = new HashSet<>();
+
+        // Process both arrays in a single pass
+        while (left >= 0 || right < m) {
+            if (left >= 0) {
+                set.add(a[left]);
+                left--;
+            }
+            if (right < m) {
+                set.add(b[right]);
+                right++;
+            }
+        }
+
+        return set.size();
+    }
+
+    public static void main(String[] args) {
+        int[] a = {4, 3, 2, 1};
+        int[] b = {1, 2, 5, 6};
+        System.out.println(uniqueElementCount(a, b));
+    }
+}
+
+
+/***********************************************************************************************************************/
