@@ -1,0 +1,93 @@
+Problem :#GFG Count Subarrays with given XOR
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/hashing-gfg-160/problem/count-subarray-with-given-xor
+
+Problem Statement : Given an array of integers arr[] and a number k, count the number of subarrays having XOR of their elements as k.
+
+Examples: 
+
+Input: arr[] = [4, 2, 2, 6, 4], k = 6
+Output: 4
+Explanation: The subarrays having XOR of their elements as 6 are [4, 2], [4, 2, 2, 6, 4], [2, 2, 6], and [6]. Hence, the answer is 4.
+
+Input: arr[] = [5, 6, 7, 8, 9], k = 5
+Output: 2
+Explanation: The subarrays having XOR of their elements as 5 are [5] and [5, 6, 7, 8, 9]. Hence, the answer is 2.
+
+Input: arr[] = [1, 1, 1, 1], k = 0
+Output: 4
+Explanation: The subarrays are [1, 1], [1, 1], [1, 1] and [1, 1, 1, 1].
+Constraints:
+
+1 ≤ arr.size() ≤ 105
+0 ≤ arr[i] ≤105
+0 ≤ k ≤ 105
+
+
+/***************************************************************************************************/
+
+1. Brute force : we can solve  this problem using nested loop
+
+
+CODE BELOW
+////////////////////////////////////////
+
+static int subarrayXor(int[] arr, int k) {
+        int res = 0;
+
+        // Pick starting point i of subarrays
+        for (int i = 0; i < arr.length; i++) {
+            int prefXOR = 0;
+
+            // Pick ending point j of subarray for each i
+            for (int j = i; j < arr.length; j++) {
+                // calculate prefXOR for subarray arr[i ... j]
+                prefXOR = prefXOR ^ arr[j];
+
+                // If prefXOR is equal to given value, increase res by 1
+                if (prefXOR == k)
+                    res++;
+            }
+        }
+        return res;      // TC : O(N^2)  // SC : O(1)
+    }
+
+/**************************************************************************************************/
+
+2. Optimal : we can solve this problem using HashMap
+
+CODE BELOW 
+//////////////////////////////////
+
+    // with XOR value equals to k
+    static int subarrayXor(int[] arr, int k) {
+        int res = 0;
+
+        // Create map that stores number of prefix arrays
+        // corresponding to a XOR value
+        HashMap<Integer, Integer> mp = new HashMap<>();
+
+        int prefXOR = 0;
+
+        for (int val : arr) {
+          
+            // Find XOR of current prefix
+            prefXOR ^= val;
+
+            // If prefXOR ^ k exists in mp then there is a subarray
+            // ending at i with XOR equal to k
+            res += mp.getOrDefault(prefXOR ^ k, 0);
+
+            // If this prefix subarray has XOR equal to k
+            if (prefXOR == k)
+                res++;
+
+            // Add the XOR of this subarray to the map
+            mp.put(prefXOR, mp.getOrDefault(prefXOR, 0) + 1);
+        }
+
+        // Return total count of subarrays having XOR of
+        // elements as given value k
+        return res;     // TC : O(N) // SC : O(N)
+    }
+
+/*********************************************************************************************/
