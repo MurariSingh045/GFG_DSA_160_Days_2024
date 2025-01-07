@@ -1,0 +1,136 @@
+Problem : Pair with given sum in a sorted array
+Problem Link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/two-pointer-technique-gfg-160/problem/pair-with-given-sum-in-a-sorted-array4940
+
+Problem Statement : You are given an integer target and an array arr[]. You have to find number of pairs in arr[] which sums up to target. It is given that the elements of the arr[] are in sorted order.
+Note: pairs should have elements of distinct indexes. 
+
+Examples :
+
+Input: arr[] = [-1, 1, 5, 5, 7], target = 6
+Output: 3
+Explanation: There are 3 pairs which sum up to 6 : {1, 5}, {1, 5} and {-1, 7}.
+
+Input: arr[] = [1, 1, 1, 1], target = 2
+Output: 6
+Explanation: There are 6 pairs which sum up to 2 : {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1} and {1, 1}.
+
+Input: arr[] = [-1, 10, 10, 12, 15], target = 125
+Output: 0
+Explanation: There is no such pair which sums up to 4.
+
+Constraints:
+-105 <= target <=105
+ 2 <= arr.size() <= 105
+-105 <= arr[i] <= 105
+
+Company Tags
+Adobe
+
+/****************************************************************************************************************/
+
+APPROACHES TO SOLVE : 
+
+/*************************************************************************************************************/
+
+1. Brute Force : we can solve this problem using nested loop
+
+CODE BELOW
+///////////////////////////////////////////////
+
+// This is Brute Force Approach 
+        
+        int n = arr.length; // size of the array
+        int cnt = 0; // to store count of the pairs
+        for(int i = 0; i<n; i++){
+            for(int j = i+1; j<n; j++){
+                if(arr[i] + arr[j] == target){
+                    cnt++;
+                }
+            }
+        }
+        return cnt; // TC : O(N^2) // SC : O(1)
+
+/**************************************************************************************************************/
+
+2. Optimal : we can solve this problem using two pointer approach
+
+#steps
+1. Initialize Variables
+2. Start Two-Pointer Loop
+3. Calculate the Sum
+4. Handle Different Cases
+5. Return the Count
+
+
+// TC : O(N) and SC : O(1)
+
+CODE BELOW 
+//////////////////////////////
+
+ int countPairs(int arr[], int target) {
+        
+        int n = arr.length;
+        int cnt = 0;
+        // use two pointers
+        int left = 0; // first pointer start from the beginning
+        int right = n-1; // secode pointer start from the end
+        
+            while(left < right){
+                int sum = arr[left] + arr[right];
+                if(sum == target){
+                    if(arr[left] == arr[right]){
+                    // if the element are same calculate all pairs
+                    // using combinator formula
+                    // calculate number of identical elements between two pointers
+                      int count = (right - left + 1);
+                      
+                     // calculate number of pairs directly using combinatorics formula
+                     // instead of counting pair one by one
+                     // and update count directly
+                     cnt += (count*(count-1))/2;
+                     
+                     // once all valid pair are counted exit from the loop
+                     // because there is nothing more to check
+                     // all pairs are already counted
+                     break; 
+                    }
+                    else{
+                        int leftCount = 1, rightCount = 1;
+                        //handle duplicate value on the left side
+                        // to ensure the unique pair
+                        while(left +1 < right && arr[left] == arr[left+1]){
+                            left++; // if duplicate found move left pointer
+                            // store left count for later multiplication with right count
+                            //to determine the total valid pair
+                            leftCount++;
+                        }
+                        
+                        // Count duplicate on the right
+                        while(right - 1 > left && arr[right] == arr[right-1]){
+                            right--;
+                            rightCount++;
+                        }
+                        // instead of counting duplicate on both side one by one
+                        // we can directly calculate duplicate pairs on both side using
+                        // formula
+                        cnt += leftCount*rightCount; // multiply duplicate count to get total no of pairs
+                        left++;
+                        right--;
+                        }
+                    
+                }
+                // if the sum is greater than target reduce right pointer
+                else if(sum > target){
+                    right--;
+                }
+                // if the sum is lesser than target increment left
+                else{
+                    left++;
+                }
+            
+        }
+        return cnt; // TC : O(N)  // SC : O(1)
+        
+        }
+
+/******************************************************************************************************/
