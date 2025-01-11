@@ -1,0 +1,158 @@
+Problem : Longest substring with distinct characters
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/two-pointer-technique-gfg-160/problem/longest-distinct-characters-in-string5848
+
+Problem Statement : Given a string s, find the length of the longest substring with all distinct characters. 
+
+Examples:
+
+Input: s = "geeksforgeeks"
+Output: 7
+Explanation: "eksforg" is the longest substring with all distinct characters.
+
+Input: s = "aaa"
+Output: 1
+Explanation: "a" is the longest substring with all distinct characters.
+
+Input: s = "abcdefabcbb"
+Output: 6
+Explanation: The longest substring with all distinct characters is "abcdef", which has a length of 6.
+
+Constraints:
+1<= s.size()<=3*104
+All the characters are in lowercase.
+
+Company Tags
+AmazonMicrosoftHousing.comAdobe
+
+/**********************************************************************************************/
+
+Brute force : 
+
+
+CODE BELOW : 
+////////////////////////////////////////
+import java.util.*;
+
+class GfG {
+    static final int MAX_CHAR = 26;
+    static int longestUniqueSubstr(String s) {
+        int n = s.length();
+        int res = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            // Initializing all characters as not visited
+            boolean[] vis = new boolean[MAX_CHAR];
+
+            for (int j = i; j < n; j++) {
+
+                // If current character is visited
+                // Break the loop
+                if (vis[s.charAt(j) - 'a'] == true)
+                    break;
+
+                // Else update the result if this window is larger,
+                // and mark current character as visited.
+                else {
+                    res = Math.max(res, j - i + 1);
+                    vis[s.charAt(j) - 'a'] = true;
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        String s = "geeksforgeeks";
+        System.out.println(longestUniqueSubstr(s));
+    }
+}
+
+/******************************************************************************************************//
+
+oPTIMAL 1 : 
+
+
+
+class GfG {
+    static final int MAX_CHAR = 26;
+    static int longestUniqueSubstr(String s) {
+        if (s.length() == 0 || s.length() == 1)
+            return s.length();
+
+        int res = 0;
+        boolean[] vis = new boolean[MAX_CHAR];
+
+        // left and right pointer of sliding window
+        int left = 0, right = 0;
+        while (right < s.length()) {
+
+            // If character is repeated, move left pointer marking
+            // visited characters as false until the repeating 
+            // character is no longer part of the current window
+            while (vis[s.charAt(right) - 'a'] == true) {
+                vis[s.charAt(left) - 'a'] = false;
+                left++;
+            }
+
+            vis[s.charAt(right) - 'a'] = true;
+
+            // The length of the current window (right - left + 1)
+            // is calculated and answer is updated accordingly.
+            res = Math.max(res, (right - left + 1));
+            right++;
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        String s = "geeksforgeeks";
+        System.out.println(longestUniqueSubstr(s));
+    }
+}
+
+/******************************************************************************************************/
+
+OPTIMAL 2 : 
+
+
+class GfG {
+    static final int MAX_CHAR = 26;
+    static int longestUniqueSubstr(String s) {
+        int n = s.length();
+        int res = 0;
+
+        // last index of all characters is initialized as -1
+        int[] lastIndex = new int[MAX_CHAR];
+        for (int i = 0; i < MAX_CHAR; i++) {
+            lastIndex[i] = -1;
+        }
+
+        // Initialize start of current window
+        int start = 0;
+
+        // Move end of current window
+        for (int end = 0; end < n; end++) {
+
+            // Find the last index of s[end]
+            // Update starting index of current window as
+            // maximum of current value of end and last index + 1
+            start = Math.max(start, lastIndex[s.charAt(end) - 'a'] + 1);
+
+            // Update result if we get a larger window
+            res = Math.max(res, end - start + 1);
+
+            // Update last index of s[end]
+            lastIndex[s.charAt(end) - 'a'] = end;
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        String s = "geeksforgeeks";
+        System.out.println(longestUniqueSubstr(s));
+    }
+}
+
+
+/********************************************************************************************/
