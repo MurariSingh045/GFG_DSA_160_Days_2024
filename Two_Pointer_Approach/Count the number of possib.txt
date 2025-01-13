@@ -1,0 +1,163 @@
+Problem : Count the number of possible triangles
+Problem Link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/two-pointer-technique-gfg-160/problem/count-possible-triangles-1587115620
+
+Problem Statement : Given an integer array arr[]. Find the number of triangles that can be formed with three different array elements as lengths of three sides of the triangle. 
+
+A triangle with three given sides is only possible if sum of any two sides is always greater than the third side.
+
+Examples:
+
+Input: arr[] = [4, 6, 3, 7]
+Output: 3
+Explanation: There are three triangles possible [3, 4, 6], [4, 6, 7] and [3, 6, 7]. Note that [3, 4, 7] is not a possible triangle.  
+
+Input: arr[] = [10, 21, 22, 100, 101, 200, 300]
+Output: 6
+Explanation: There can be 6 possible triangles: [10, 21, 22], [21, 100, 101], [22, 100, 101], [10, 100, 101], [100, 101, 200] and [101, 200, 300]
+
+Input: arr[] = [1, 2, 3]
+Output: 0
+Explanation: No triangles are possible.
+
+Constraints:
+3 <= arr.size() <= 103
+0 <= arr[i] <= 105
+
+Company Tags
+1.Amazon 2.Microsoft
+
+/***************************************************************************************************************/
+
+APPROACHES TO SOLVE :
+
+/**************************************************************************************************/
+
+1. Brute force : we can solve this problem using 3 nested loop
+ 
+TC : O(N^3) SC : O(1)
+
+CODE BELOW
+////////////////////////////////
+import java.util.ArrayList;
+
+class GfG {
+    // Function to count all possible triangles with arr[]
+    // values as sides
+    static int countTriangles(int[] arr) {
+        int res = 0;
+
+        // The three loops select three different values from
+        // array
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                for (int k = j + 1; k < arr.length; k++) {
+                    // Sum of two sides is greater than the third
+                    if (arr[i] + arr[j] > arr[k] &&
+                        arr[i] + arr[k] > arr[j] &&
+                        arr[k] + arr[j] > arr[i]) {
+                        res++;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {4, 6, 3, 7};
+        System.out.println(countTriangles(arr));
+    }
+}
+
+/**************************************************************************************************/
+
+2. Better Approach : we can solve this problem using Binary Search
+
+TC : O((n^2)*log n) and Space : O(1)
+
+
+
+//////////////////////////////////////////
+import java.util.Arrays;
+
+class GfG {
+    // Function to count the number of valid triangles
+    static int countTriangles(int[] arr) {
+        int res = 0;
+
+        // Sort the array to apply the triangle inequality efficiently
+        Arrays.sort(arr);
+
+        // Iterate through pairs of sides (arr[i], arr[j])
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+
+                // Find the first index where the sum of two sides is not valid
+                int lo = j + 1, hi = arr.length;
+                int target = arr[i] + arr[j];
+                while (lo < hi) {
+                    int mid = lo + (hi - lo) / 2;
+                    if (arr[mid] < target) {
+                        lo = mid + 1;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                // Count the number of valid third sides
+                int cnt = lo - j - 1;
+                res += cnt;
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {4, 6, 3, 7};
+        System.out.println(countTriangles(arr));
+    }
+}
+
+/******************************************************************************************//
+
+Optimal : we can solve this problem using Two pointer approach
+
+O(n^2) Time and O(1) Space
+
+
+///////////////////////////////////////////////////////
+
+   // Function to count the number of valid triangles
+    static int countTriangles(int[] arr) {
+        int res = 0;
+        Arrays.sort(arr);
+
+        // Iterate through the array, fixing the largest side at arr[i]
+        for (int i = 2; i < arr.length; ++i) {
+            // Initialize pointers for the two smaller sides
+            int left = 0, right = i - 1;
+
+            while (left < right) {
+                if (arr[left] + arr[right] > arr[i]) {
+                    // arr[left] + arr[right] satisfies the triangle inequality,
+                    // so all pairs (x, right) with (left <= x < right) are valid
+                    res += right - left;
+
+                    // Move the right pointer to check smaller pairs
+                    right--;
+                } else {
+                    // Move the left pointer to increase the sum
+                    left++;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {4, 6, 3, 7};
+        System.out.println(countTriangles(arr));
+    }
+}
+
+/************************************************************************************************************/
