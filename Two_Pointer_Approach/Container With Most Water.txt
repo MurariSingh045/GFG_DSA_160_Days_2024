@@ -1,0 +1,125 @@
+Problem : Container With Most Water
+
+Problem Link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/two-pointer-technique-gfg-160/problem/container-with-most-water0535
+
+Problem Statement : Given an array arr[] of non-negative integers, where each element arr[i] represents the height of the vertical lines, find the maximum amount of water that can be contained between any two lines, together with the x-axis.
+
+Note: In the case of a single vertical line it will not be able to hold water.
+
+Examples:
+
+Input: arr[] = [1, 5, 4, 3]
+Output: 6
+Explanation: 5 and 3 are 2 distance apart. So the size of the base is 2. Height of container = min(5, 3) = 3. So, total area to hold water = 3 * 2 = 6.
+
+Input: arr[] = [3, 1, 2, 4, 5]
+Output: 12
+Explanation: 5 and 3 are 4 distance apart. So the size of the base is 4. Height of container = min(5, 3) = 3. So, total area to hold water = 4 * 3 = 12.
+
+Input: arr[] = [2, 1, 8, 6, 4, 6, 5, 5]
+Output: 25 
+Explanation: 8 and 5 are 5 distance apart. So the size of the base is 5. Height of container = min(8, 5) = 5. So, the total area to hold water = 5 * 5 = 25.
+
+Constraints:
+1<= arr.size() <=105
+1<= arr[i] <=104
+
+Company Tags
+1.Flipkart 2.Amazon 3.Google
+
+/*******************************************************************************************************/
+
+APPROACHES TO SOLVE : 
+
+/***********************************************************************************************************/
+
+1. Brute Force : we can solve this problem using nested loops
+ 
+#Steps 
+1. create a variable which would store the maximum trapped water
+2. run 2 nested loops till n
+3. find the current trapped water  using formula  min(arr[i], arr[j]) * (j – I).
+4. calculate max result between (maxwater variable and current trapped water)
+5. return maxWater
+
+TC : O(N^2) and SC : O(1)
+
+
+CODE BELOW
+///////////////////////////////
+
+ // Brute Force Approach
+        
+        int n = arr.length;  // size of the array
+        int maxWater = 0; // to store maximum amount of water
+        for(int i = 0; i<n; i++){
+            for(int j = i+1; j<n; j++){
+                // calculate current tarpped water
+                int trappedwater = Math.min(arr[i] , arr[j]) * (j-i);
+                // find the maximum amount of water
+                maxWater = Math.max(maxWater , trappedwater);
+            }
+        }
+        return maxWater;  // TC : O(N^2)  // SC : O(1)
+
+/********************************************************************************************/
+Can we optimize it ? :-> yes we can
+
+OPTIMAL : we can optimize this problem using two pointer Approach 
+
+ #steps
+1.  create a variable which would store the maximum trapped water
+2. initialize two pointer left & right .. our trapped water lie in between arr[left] and arr[right]
+3. calculate current trapped water using formula min(arr[left], arr[right]) * (right – left). 
+4. find maximum between (maxtrapped water & current trapped water)
+5. if arr[left] < arr[right] then increment left(left++)
+6. if the arr[left] > arr[right] then decrement right(right--)
+7. return max trapped water
+
+TC : O(N) and SC : O(1)
+
+
+CODE BELOW
+/////////////////////////////////////////
+
+ int n = arr.length; // size of the array
+      // initialize two pointer
+      int left = 0;
+      int right = n-1;
+      int maxWater =  0; // store maximum amount of the water
+      while(left < right){
+          // find the water store into the container
+          // between arr[left] and arr[right]
+          int trappedWater = Math.min(arr[left] , arr[right])*(right-left);
+          maxWater = Math.max(maxWater , trappedWater);
+          
+          // the sorter boundary is arr[left]
+          // to maximize the water trapped , we need a taller height on the left side
+          // moving left pointer towards right
+          // give chance to find taller boundary that could increase
+          // trapped water in subsequent iteration
+          if(arr[left] < arr[right]){
+              left++; // increment left
+          }
+           // the sorter boundary is arr[right]
+          // to maximize the water trapped , we need a taller height on the right side
+          // moving right pointer towards left
+          // give chance to find taller boundary that could increase
+          // trapped water in subsequent iteration
+          else{
+              right--; // decrease right pointer
+          }
+        //   why not move both pointer ?
+          // if we move both pointer simultaneously 
+          // the intermediate possibility for the trapping water
+          // would be skipped 
+          // there might be chance of miss the max amount of water tarpped
+      }
+        
+       return maxWater;   // TC : O(N) // SC : O(1)
+
+/*********************************************************************************************/
+
+
+
+
