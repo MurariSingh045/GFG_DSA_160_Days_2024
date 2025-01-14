@@ -1,0 +1,179 @@
+Problem : Equilibrium Point
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/prefix-sum-gfg-160/problem/equilibrium-point-1587115620
+
+Problem Statement : Given an array of integers arr[], the task is to find the first equilibrium point in the array.
+
+The equilibrium point in an array is an index (0-based indexing) such that the sum of all elements before that index is the same as the sum of elements after it. Return -1 if no such point exists. 
+
+Examples:
+
+Input: arr[] = [1, 2, 0, 3]
+Output: 2 
+Explanation: The sum of left of index 2 is 1 + 2 = 3 and sum on right of index 2 is 0 + 3 = 3.
+
+Input: arr[] = [1, 1, 1, 1]
+Output: -1
+Explanation: There is no equilibrium index in the array.
+
+Input: arr[] = [-7, 1, 5, 2, -4, 3, 0]
+Output: 3
+Explanation: The sum of left of index 3 is -7 + 1 + 5 = -1 and sum on right of index 3 is -4 + 3 + 0 = -1.
+
+Constraints:
+3 <= arr.size() <= 106
+0 <= arr[i] <= 109
+
+Company Tags
+1.Amazon 2.Adobe
+
+/*************************************************************************************************************/
+
+APPROACHES TO SOLVE : 
+
+/***********************************************************************************************************/
+
+1. Brute Force : we can solve this problem using nested loop
+
+// TC : O(N^2)  // SC : O(1)
+
+#Steps
+1. Handle edge case if the length of the array is less than 3 then return (-1) we can not find equilibrium index
+2. run a loop from (0 to n)
+3. calculate left sum inside the loop .. run this loop (0 to i)
+4. calculate right sum inside the loop ... run this loop from (i+1 to n)
+5. check conditions each time after calculating leftSum and rightSum 
+// if (leftsum == rightsum ) then return the current index as equilibrium index
+6. if no equilibrium index found return -1
+
+CODE BELOW
+////////////////////////////////////////////
+
+   
+        // Brute Force Approach
+        int n = arr.length; // size of the array
+        // Handle edge case 
+        // if the array length is lesser than 3 then 
+        // we can't find equilibrium point
+        if( n < 3) return -1;
+        for(int i = 0; i<n; i++){
+            
+            // calculate sum before equilibrium point(leftsum)
+            int leftSum = 0;
+            for(int j = 0; j < i; j++){
+                leftSum += arr[j];
+            }
+            
+            // calculate sum after equilibrium point(rightsum)
+            int rightSum = 0;
+            for(int j = i+1; j<n; j++){
+                rightSum += arr[j];
+            }
+            
+            // if the left sum == rightsum means we get our
+            // equilibrium point so return that index(i)
+            if(leftSum == rightSum) return i;
+        }
+        // if we doesn't get our equilibrium point return -1
+        return -1; // TC : O(N^2) // SC : O(1)
+
+/*************************************************************************************************************/
+
+2. Better Approach : we can reduce this problem complexity by calculating prefix sum & suffix sum
+
+TC : O(N) // SC : O(N)
+#Steps
+1. Handle edge case if the length of the array is less than 3 then return (-1) we can not find equilibrium index
+2. create two array PrefixSum & SuffixSum of size n
+3. calculate prefixsum by traversing array from ( 0 to 1)
+4. calculate suffixSum by traversing array from (n to 0)
+5. run a loop and check for the i index if the prefixsum of this i index and suffix sum of this i index is equal
+6. if it is equal then return the current index i as an equilibrium index
+7. if the equilibrium index is not found then return -1
+
+
+CODE BELOW
+////////////////////////////////////////////////////
+  int n = arr.length; // size of the array
+      // Handle edge case
+      if(n < 3) return -1;
+       
+      // Create two array prefix sum & suffix sum of size n
+      int prefixSum[] = new int[n];
+      int suffixSum[] = new int[n];
+        
+      // initilize ends of the both array
+      prefixSum[0] = arr[0];
+      suffixSum[n-1] = arr[n-1];
+       
+      // calculate prefix sum of all indices
+      for(int i = 1; i < n; i++){
+          prefixSum[i] = prefixSum[i-1] + arr[i];
+      }
+        
+        // calculate suffix sum of all indices
+        for(int i = n-2; i >= 0; i--){
+            suffixSum[i] = suffixSum[i+1] + arr[i];
+        }
+        
+        // check if the prefixSum and SuffixSum is equal 
+        // return that indices as an equilibrium index
+        for(int i = 0; i < n; i++){
+            if(prefixSum[i] == suffixSum[i]){
+                // if equilibrium index exist return i
+                return i; 
+            }
+        }
+        
+        // if equilibrium index doesn't exist return -1
+        return -1; // TC : O(N) // SC : O(N)
+
+/**********************************************************************************************************/
+
+Can we reduce it further : yes we can reduce it further but only it's space complexity not TC
+3. Optimal Approach : we can solve it instead of creating array for (prefix Sum & Suffix Sum) and calculate prefix sum and suffix sum 
+.. we can directly calculate inside the single for loop
+
+TC : O(N)  // SC : O(1)
+
+#steps
+1. Handle edge case if the length of the array is less than 3 then return (-1) we can not find equilibrium index
+2. Run a loop from ( 0 to n) calculate total sum 
+3. again run a loop inside this we calculate prefix sum
+4. inside this loop we also calculate suffixSum using formula : suffixSum = totalsum - prefixsum - arr[i]
+5. check the condition if (prefixsum == suffixsum) then return the current index i as an equilibrium index
+6. if the equilibrium index is not found then return -1;
+
+
+CODE BELOW 
+////////////////////////////////////////////////////////////
+
+  int n = arr.length;// size of the array
+       // Handle edge case 
+       // if the length is less than 3 we can not find our
+       // equilibrium index
+       if(n < 3) return -1;
+       int prefixSum = 0; // to store prefix sum of the array
+       int totalSum = 0; // store the total sum of the array
+       for(int ele : arr){
+           // add elements of the array into total sum
+           totalSum += ele;
+       }
+       
+        // iterate pivot over all the elements of the array
+        for(int pivot = 0; pivot < n; pivot++){
+            // calculate the suffix sum 
+            int suffixSum = totalSum - prefixSum - arr[pivot];
+            
+            // if the suffix Sum is equal to the prefix sum 
+            // then return the current index as equilibrium index
+            if(prefixSum == suffixSum){
+                return pivot; // return current index
+            }
+            // update prefixSum
+            prefixSum += arr[pivot];
+        }
+        // if the equilibrium index is not found
+        return -1;  // TC : O(N) // SC : O(1)
+
+/***************************************************************************************************/
