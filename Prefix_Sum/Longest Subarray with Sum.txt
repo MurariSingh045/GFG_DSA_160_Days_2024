@@ -1,0 +1,139 @@
+Problem : Longest Subarray with Sum K
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/prefix-sum-gfg-160/problem/longest-sub-array-with-sum-k0809
+
+Problem statement : Given an array arr[] containing integers and an integer k, your task is to find the length of the longest subarray where the sum of its elements is equal to the given value k. If there is no subarray with sum equal to k, return 0.
+
+Examples:
+
+Input: arr[] = [10, 5, 2, 7, 1, -10], k = 15
+Output: 6
+Explanation: Subarrays with sum = 15 are [5, 2, 7, 1], [10, 5] and [10, 5, 2, 7, 1, -10]. The length of the longest subarray with a sum of 15 is 6.
+
+Input: arr[] = [-5, 8, -14, 2, 4, 12], k = -5
+Output: 5
+Explanation: Only subarray with sum = 15 is [-5, 8, -14, 2, 4] of length 5.
+
+Input: arr[] = [10, -10, 20, 30], k = 5
+Output: 0
+Explanation: No subarray with sum = 5 is present in arr[].
+
+Constraints:
+1 ≤ arr.size() ≤ 105
+-104 ≤ arr[i] ≤ 104
+-109 ≤ k ≤ 109
+
+Company Tags
+1.Amazon
+
+/****************************************************************************************************/
+
+APPROACHES TO SOLVE :
+
+/***********************************************************************************************/
+
+1. BruteForce : we can solve this problem using nested loop
+ #steps
+1. run a for loop from (0 to n)
+2. run another for loop inside prvious loop from ( j = i to n)
+3. calculate sum and check the if(sum == k) then
+4. calculate sub array length of current subarray = (j-i+1)
+5. compare currsublength and maxsublength and return maximum among both
+
+
+TC : O(N^2)  SC : O(1)
+
+
+CODE BELOW
+/////////////////////////////////////////////////////////
+// Java program to find the length of the longest
+// subarray having sum k using nested loop
+class GfG {
+  
+      // Function to find longest sub-array having sum k
+    static int longestSubarray(int[] arr, int k) {
+        int res = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            
+            // Sum of subarray from i to j
+            int sum = 0;
+            for (int j = i; j < arr.length; j++) {
+                sum += arr[j];
+              
+                // If subarray sum is equal to k
+                if (sum == k) {
+                  
+                    // find subarray length and update result
+                    int subLen = j - i + 1;
+                    res = Math.max(res, subLen);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {10, 5, 2, 7, 1, -10};
+        int k = 15;
+        System.out.println(longestSubarray(arr, k));
+    }
+}
+
+/*******************************************************************************************************/
+
+2.Optimal : we can solve this problem(optimize) it using prefixsum map
+#Steps
+1. create a prefix hash Map , maxlength , prefisum variable
+2. run a loop and calculate prefixsum
+3. check if the prefix sum ==  k then update maxlength = i+1 coz it is 0 based indexing
+4. check another condition if(prefixsum - k) present in the prefixmap ... means earlier a prefix sum exits which sum is eqaul to k
+ 
+this time we calculate our length = (i-j) means this is length of earlier subarray j+1 to i
+
+5. compare maxlength and current length and update maxlength with maximum value
+6.  Store the First Occurrence of Each Prefix Sum
+if the prefixSum does not exist then we update prefixsum with their indexes
+
+
+TC : O(N) // SC : O(N)
+
+
+CODE BELOW
+///////////////////////////////////////
+      int n = arr.length;// size of the array
+        HashMap<Integer , Integer> prefMap = new HashMap<>();
+        int prefixSum = 0;
+        int maxlength = 0;
+        for(int i = 0; i<n; i++){
+            prefixSum += arr[i]; // calculate subaaray sum
+            
+            // check if the prefix sum == k
+            if(prefixSum == k){
+                // store indxex into max sum 
+                // why add 1 coz it is 0 based indexing
+                maxlength = i+1;
+            }
+            // this codition check the earlier prefix sum(prefisSum(j))int the map
+            // means it statisfied prefSum(current) - prefSum(j) = k
+            // if the prefix sum - k exists in the prefmap
+            // then there exists such 
+            // subarray from (previous prefix +1) to i
+            else if(prefMap.containsKey(prefixSum - k)){
+                
+                // then calculate which prefix sum has maxlength
+                // here i is current index and prefmap.get(prefixSum-k)
+                // it will give the previous index where earlier prefsum was stored
+                // (i - j) is the length of subarray from j+1 to i
+                maxlength = Math.max(maxlength , i-prefMap.get(prefixSum - k));
+            }
+            // store only first occurence indexes of prefixSum
+            if(!prefMap.containsKey(prefixSum)){
+                prefMap.put(prefixSum , i);
+            }
+        }
+        return maxlength;
+        // TC : O(N)  // SC : O(N)
+
+/**************************************************************************************************************/
