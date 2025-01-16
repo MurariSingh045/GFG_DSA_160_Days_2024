@@ -1,0 +1,170 @@
+Problem : Largest subarray of 0's and 1's
+
+Problem Link :  https://www.geeksforgeeks.org/batch/gfg-160-problems/track/prefix-sum-gfg-160/problem/largest-subarray-of-0s-and-1s
+
+Problem Statement : Given an array arr of 0s and 1s. Find and return the length of the longest subarray with equal number of 0s and 1s.
+
+Examples:
+
+Input: arr[] = [1, 0, 1, 1, 1, 0, 0]
+Output: 6
+Explanation: arr[1...6] is the longest subarray with three 0s and three 1s.
+
+Input: arr[] = [0, 0, 1, 1, 0]
+Output: 4
+Explnation: arr[0...3] or arr[1...4] is the longest subarray with two 0s and two 1s.
+
+Input: arr[] = [0]
+Output: 0
+Explnation: There is no subarray with an equal number of 0s and 1s.
+
+Constraints:
+1 <= arr.size() <= 105
+0 <= arr[i] <= 1
+
+Company Tags
+1.Paytm 2.Morgan 3.Stanley 4.Amazon 5.MakeMyTrip
+
+/************************************************************************************************************/
+
+APPROAHES TO SOLVE : 
+
+/*************************************************************************************************************/
+
+1. BruteForce1 : we can solve it using nested loop   // TC : O(N^2) // SC : O(1)
+#Steps
+1. create maxlength variable to return maximum subarray length which has equal 0's and 1's
+2. run a loop from (i = 0 to n)
+3. run another loop inside this loop
+4.inside second loop create two variable (cnt0 which will store count of 0's) & (cnt1 : which will store count of 1's)
+5.calculte count of subarray and compare if the (cnt0 == cnt1) then calculate length of subarray (j-i+1) and calculate maximum length between current length & max length and return them.
+
+CODE BELOW
+//////////////////////////////////////////////////////
+// Brute Force 
+        int n = arr.length;
+        int maxlength = 0; // store longest subarray with equal 0 and 1
+        for(int i = 0; i < n; i++){
+            int cnt0 = 0; // to count 0 of subarray
+            int cnt1 = 0;  // to count 1 of subarray
+            for(int j = i; j < n; j++){
+                // if arr[j] == 0 then increment count of zero
+                if(arr[j] == 0) cnt0++;
+                // if arr[j] == 1 then increment count of 1
+                else if(arr[j] == 1) cnt1++;
+                // check if the count of zero is equals count of 1
+                if(cnt0 == cnt1){
+                    // if above condition match calculate current length of subarray
+                    int sublen = j-i+1; // calculate length of subarray
+                    // here we are finding maximum length of subarray
+                    maxlength = Math.max(maxlength , sublen);
+                }
+            }
+        }
+        return maxlength; // TC : O(N^2) // SC : O(1)
+
+/************************************************************************************************************/
+
+2. BruteForce2 .: the working is similarly to above approach but the logic is bit difference
+ TC : O(N^2) // SC  : O(1)
+
+#Steps
+1. here we instead of counting 0's and 1's we use prefix sum and put the value -1 instead of 0 
+2. and if 0 not found we add value 1 into prefixSum
+3. after that check the condition if (prefixSum == 0) then we can surely say there is equal no of 0's and 1's in this subarray 
+4. then we calculate length of subarray and return maximum between current and previous
+
+CODE BELOW
+
+///////////////////////////////////////////////////////////////////////
+
+// Java program to find the longest subarray with
+// equal number of 0s and 1s using nested loop
+
+import java.util.*;
+class GfG {
+    static int maxLen(int[] arr) {
+        int res = 0;
+
+        // Pick a starting point as 's'
+        for (int s = 0; s < arr.length; s++) {
+            int sum = 0;
+
+            // Consider all subarrays arr[s...e]
+            for (int e = s; e < arr.length; e++) {
+                sum += (arr[e] == 0) ? -1 : 1;
+
+                // Check if it's a 0-sum subarray
+                if (sum == 0)
+                    // Update max size
+                    res = Math.max(res, e - s + 1);
+            }
+        }
+
+        return res;
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 0, 0, 1, 0, 1, 1};
+        System.out.println(maxLen(arr));
+    }
+}
+
+/*******************************************************************************************************/
+
+3.Optimal : we can solve this problem using prefixSum and HashMap
+ 
+TC : O(N)  // SC : O(N)
+
+#steps
+1. create a HashMap which will store the prefisum and their indices
+2. create a variable maxlength which will store the maximum length of subarray which has equal no of 0's and 1's
+3.run a loop and calculate prefixSum and add (-1) if we get 0's  and (1) if we get 1's into prefixSum
+4. if (prefixSum == 0) then update maxlength = i+1 why +1 coz it is 0 based indexing
+5. check in hashmap if the prefixsum have seen before if yes then return maxlength prefix sum b/w current and previos prefixSum
+6.  add prefixSum and their index into HashMap only if we haven't seen it before into HashMap
+7. return maxLength;
+
+CODE BELOW
+/////////////////////////////////////////////
+
+    // Optimal Approach 
+        
+     int n = arr.length;
+     // HashMap store prefixSum and thier indexes
+     HashMap<Integer , Integer> hm = new HashMap<>();
+     int prefixSum = 0 ; // to store prefix sub array sum
+     int maxlength = 0; // to store maximum subarray length
+     
+     for(int i = 0 ; i < n; i++){
+         
+         // calculate prefixSum
+         // if we get arr[i] == 0 then we have to add -1 instead of 0
+         // we we doesn't get 0 then add 1 in prefixSum
+         prefixSum += (arr[i] == 0) ? -1 : 1;
+         
+         // check if the prefixSum == 0 if yes then update malength by i+1
+         if(prefixSum == 0){
+             // why +1 coz it is 0 based indexing
+             maxlength = i+1;
+             }
+              // if the prefixSum is seen before then update maxlength
+             // with maximum between previous and current
+             if(hm.containsKey(prefixSum)){
+                 
+                 // choose maximum between previous and current
+                 // i-hm.get(prefixSum) gives the length of previous prefixSum
+                 // means if the previous prefixSum is prefixSum(j)
+                 // it calculate the length (j - i) means from previous index(j) to current index(i)
+                 maxlength = Math.max(maxlength , i - hm.get(prefixSum));
+             }
+             // if the prefix sum not seen before into hashmap put it into hashMAp
+             else{
+                 hm.put(prefixSum  , i);
+         }
+     }
+     return maxlength;  // TC : O(N)  // SC : O(N)
+
+/*************************************************************************************************************/
+
+
