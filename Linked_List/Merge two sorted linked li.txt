@@ -1,0 +1,266 @@
+Problem : Merge two sorted linked lists
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/linked-list-gfg-160/problem/merge-two-sorted-linked-lists
+
+Problem Statement : Given the head of two sorted linked lists consisting of nodes respectively. The task is to merge both lists and return the head of the sorted merged list.
+
+Examples:
+
+Input: head1 = 5 -> 10 -> 15 -> 40, head2 = 2 -> 3 -> 20
+Output: 2 -> 3 -> 5 -> 10 -> 15 -> 20 -> 40
+Explanation:
+
+Input: head1 = 1 -> 1, head2 = 2 -> 4
+Output: 1 -> 1 -> 2 -> 4
+Explanation:
+
+Constraints:
+1 <= no. of nodes<= 103
+0 <= node->data <= 105
+
+Company Tags
+1.Zoho 2.Flipkart 3.Accolite 4.Amazon 5.Microsoft 6.Samsung 7.FactSet 8.MakeMyTrip 9.Oracle 10.Brocade 11.Synopsys 12.OATS Systems 13.Belzabar
+
+
+/**************************************************************************************************************/
+
+APPROACHES TO SOLVE : 
+
+/*************************************************************************************************************/
+
+1. Brute Force : we can solve it using array
+
+TC : O((n+m)*log(n+m)) // Space : O(n+m)
+
+/////////////////////////////////////////////////////
+// Java program to merge two sorted linked lists
+// using array
+import java.util.*;
+
+class Node {
+    int data;
+    Node next;
+
+    Node(int x)
+    {
+        data = x;
+        next = null;
+    }
+}
+
+class GfG {
+
+    // Function to merge two sorted linked lists
+    static Node sortedMerge(Node head1,
+                                       Node head2) {
+        ArrayList<Integer> arr = new ArrayList<>();
+
+        // Pushing the values of the first linked list
+        while (head1 != null) {
+            arr.add(head1.data);
+            head1 = head1.next;
+        }
+
+        // Pushing the values of the second linked list
+        while (head2 != null) {
+            arr.add(head2.data);
+            head2 = head2.next;
+        }
+
+        // Sorting the list
+        Collections.sort(arr);
+
+        // Creating a new list with sorted values
+        Node dummy = new Node(-1);
+        Node curr = dummy;
+
+        for (int i = 0; i < arr.size(); i++) {
+            curr.next = new Node(arr.get(i));
+            curr = curr.next;
+        }
+
+        return dummy.next;
+    }
+
+    static void printList(Node curr) {
+        while (curr != null) {
+            System.out.print(curr.data);
+            if (curr.next != null) {
+                System.out.print(" ");
+            }
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+
+        // First linked list: 5 -> 10 -> 15
+        Node head1 = new Node(5);
+        head1.next = new Node(10);
+        head1.next.next = new Node(15);
+
+        // Second linked list: 2 -> 3 -> 20
+        Node head2 = new Node(2);
+        head2.next = new Node(3);
+        head2.next.next = new Node(20);
+
+        Node res = sortedMerge(head1, head2);
+        printList(res);
+    }
+}
+
+/***********************************************************************************************************/
+
+2. Better Approach : we can solve it using recursion
+
+TC :  O(n+m) // Space : O(n+m)
+
+////////////////////////////////////////////////////////////////////////////
+// Java program to merge two sorted linked
+// lists recursively
+class Node {
+    int data;
+    Node next;
+
+    Node(int x) {
+        data = x;
+        next = null;
+    }
+}
+
+class GfG {
+
+    // Function to merge two sorted linked lists recursively
+    static Node sortedMerge(Node head1, Node head2) {
+
+        // Base cases
+        if (head1 == null)
+            return head2;
+        if (head2 == null)
+            return head1;
+
+        // Recursive merging based on smaller value
+        if (head1.data <= head2.data) {
+            head1.next = sortedMerge(head1.next, head2);
+            return head1;
+        }
+        else {
+            head2.next = sortedMerge(head1, head2.next);
+            return head2;
+        }
+    }
+
+    static void printList(Node curr) {
+        while (curr != null) {
+            System.out.print(curr.data);
+            if (curr.next != null)
+                System.out.print(" ");
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+
+        // First linked list: 5 -> 10 -> 15
+        Node head1 = new Node(5);
+        head1.next = new Node(10);
+        head1.next.next = new Node(15);
+
+        // Second linked list: 2 -> 3 -> 20
+        Node head2 = new Node(2);
+        head2.next = new Node(3);
+        head2.next.next = new Node(20);
+
+        Node res = sortedMerge(head1, head2);
+        printList(res);
+    }
+}
+
+/**********************************************************************************************************/
+
+3. [Efficient Approach] Using Iterative Merge – O(n+m) Time and O(1) Space
+
+//////////////////////////////////////////////////////////////////////////
+
+// Java program to merge two sorted linked 
+// lists iteratively
+class Node {
+    int data;
+    Node next;
+
+    Node(int x) {
+        data = x;
+        next = null;
+    }
+}
+
+class GfG {
+
+    // Function to merge two sorted linked 
+    // lists iteratively
+    static Node sortedMerge(Node head1,
+                                       Node head2) {
+
+        // Create a dummy node to simplify 
+        // the merging process
+        Node dummy = new Node(-1);
+        Node curr = dummy;
+
+        // Iterate through both linked lists
+        while (head1 != null && head2 != null) {
+          
+            // Add the smaller node to the merged list
+            if (head1.data <= head2.data) {
+                curr.next = head1;
+                head1 = head1.next;
+            } else {
+                curr.next = head2;
+                head2 = head2.next;
+            }
+            curr = curr.next;
+        }
+
+        // If any list is left, append it to 
+        // the merged list
+        if (head1 != null) {
+            curr.next = head1;
+        } else {
+            curr.next = head2;
+        }
+
+        // Return the merged list starting from 
+        // the next of dummy node
+        return dummy.next;
+    }
+
+    static void printList(Node head) {
+        while (head != null) {
+            System.out.print(head.data);
+            if (head.next != null)
+                System.out.print(" ");
+            head = head.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+
+        // First linked list: 5 -> 10 -> 15 -> 40
+        Node head1 = new Node(5);
+        head1.next = new Node(10);
+        head1.next.next = new Node(15);
+        head1.next.next.next = new Node(40);
+
+        // Second linked list: 2 -> 3 -> 20
+        Node head2 = new Node(2);
+        head2.next = new Node(3);
+        head2.next.next = new Node(20);
+
+        Node res = sortedMerge(head1, head2);
+        printList(res);
+    }
+}
+
+/**********************************************************************************************************/
