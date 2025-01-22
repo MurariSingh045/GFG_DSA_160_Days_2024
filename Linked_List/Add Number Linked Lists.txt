@@ -1,0 +1,407 @@
+Problem : Add Number Linked Lists
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/linked-list-gfg-160/problem/add-two-numbers-represented-by-linked-lists
+
+Problem Statement : Given the head of two singly linked lists num1 and num2 representing two non-negative integers. The task is to return the head of the linked list representing the sum of these two numbers.
+
+For example, num1 represented by the linked list : 1 -> 9 -> 0, similarly num2 represented by the linked list: 2 -> 5. Sum of these two numbers is represented by 2 -> 1 -> 5.
+
+Note: There can be leading zeros in the input lists, but there should not be any leading zeros in the output list.
+
+Examples:
+
+Input: num1 = 4 - > 5, num2 = 3 -> 4 -> 5
+Output:  3 -> 9 -> 0
+ 
+Explanation: Given numbers are 45 and 345. There sum is 390.
+Input: num1 = 0 -> 0 -> 6 -> 3, num2 = 0 -> 7 
+Output: 7 -> 0 
+ 
+Explanation: Given numbers are 63 and 7. There sum is 70.
+Constraints:
+1 <= size of both linked lists <= 106
+0 <= elements of both linked lists <= 9
+
+Company Tags
+1.Flipkart 2.Morgan 3.Stanley 4.Accolite 5.Amazon 6.Microsoft 7.Snapdeal 8.MakeMyTrip 9.Qualcomm
+
+/****************************************************************************************************/
+
+1. O(max(m, n)) where m and n are number of nodes in list l1 and list l2 respectively. 
+Space Complexity: O(1)
+
+//////////////////////////////////////////////////////////////////////////////
+
+import java.util.*; 
+class Node 
+{ 
+	int data; 
+	Node next; 
+	
+	// constructor 
+	Node(int d) 
+	{ 
+		data = d; 
+		next = null; 
+	} 
+}// Node closes 
+
+class LinkedList 
+{ 
+	Node head; 
+	
+	// Helper function to traverse 
+	void traverse(Node head) 
+	{ 
+		while(head != null) 
+		{ 
+			System.out.print(head.data + "->"); 
+			head = head.next; 
+		} 
+	} 
+
+	// Helper function to insert data in linked list 
+	void insert(int x) 
+	{ 
+		Node temp = new Node(x); 
+		if(head == null) head = temp; 
+		else
+		{ 
+			temp.next = head; 
+			head = temp; 
+		} 
+	} 
+
+	// Helper function to reverse the list 
+	public static Node reverse(Node head) 
+	{ 
+		if(head == null || head.next == null) return head; 
+
+		Node prev = null; 
+		Node curr = head; 
+		while(curr != null) 
+		{ 
+			Node temp = curr.next; 
+			curr.next = prev; 
+			prev = curr; 
+			curr = temp; 
+		} 
+		head = prev; 
+		return head; 
+	} 
+	
+	// Function to add two lists 
+	public static Node sum(Node l1, Node l2) 
+	{ 
+		if(l2 == null) return l1; 
+		if(l1 == null) return l2; 
+
+		// reverse l1 list 
+		l1 = reverse(l1); 
+
+		// reverse l2 list 
+		l2 = reverse(l2); 
+
+		// storing head whose reverse is to be returned 
+		// This is where which will be final node 
+		Node head = l1; 
+		Node prev = null; 
+		int c = 0,sum; 
+		while(l1 != null && l2 != null) 
+		{ 
+			sum = c + l1.data + l2.data; 
+			l1.data = sum % 10; 
+			c = sum / 10; 
+			prev = l1; 
+			l1 = l1.next; 
+			l2 = l2.next; 
+		} 
+
+		if(l1 != null||l2 != null) 
+		{ 
+			if(l2 != null) prev.next = l2; 
+			l1 = prev.next; 
+			while(l1 != null) 
+			{ 
+				sum = c + l1.data; 
+				l1.data = sum % 10; 
+				c = sum / 10; 
+				prev = l1; 
+				l1 = l1.next; 
+			} 
+		} 
+		if(c > 0) prev.next = new Node(c); 
+		return reverse(head); 
+	} 
+
+	// Driver Code 
+	public static void main(String[] args) 
+	{ 
+		LinkedList l1 = new LinkedList(); 
+		l1.insert(3); 
+		l1.insert(6); 
+		l1.insert(5); 
+		LinkedList l2 = new LinkedList(); 
+		l2.insert(2); 
+		l2.insert(4); 
+		l2.insert(8); 
+		LinkedList l3 = new LinkedList(); 
+		Node head = sum(l1.head, l2.head); 
+		l3.traverse(head); 
+		System.out.print("Null"); 
+	} 
+} 
+
+
+
+/*********************************************************************************************************/
+
+2..[Expected Approach] By storing sum on the longer list – O(m + n) Time and O(1) Space
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Java Program to add two numbers represented as
+// linked list by creating a new list
+
+class Node {
+    int data;
+    Node next;
+
+    Node(int val) {
+        data = val;
+        next = null;
+    }
+}
+
+class GfG {
+
+    // Function to reverse the linked list
+    static Node reverse(Node head) {
+        Node prev = null;
+        Node curr = head;
+        Node next;
+
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+    
+    // Function to trim leading zeros in linked list
+    static Node trimLeadingZeros(Node head) {
+        while (head != null && head.data == 0) {
+            head = head.next;
+        }
+        return head;
+    }
+
+    // Function to add two numbers represented by linked list
+    static Node addTwoLists(Node num1, Node num2) {
+        Node res = null;
+        Node curr = null;
+        int carry = 0;
+      
+        num1 = trimLeadingZeros(num1);
+        num2 = trimLeadingZeros(num2);
+      
+        num1 = reverse(num1);
+        num2 = reverse(num2);
+
+        // Iterate till either num1 is not empty or num2 is
+        // not empty or carry is greater than 0
+        while (num1 != null || num2 != null || carry != 0) {
+            int sum = carry;
+
+            // If num1 linked list is not empty, add it to sum
+            if (num1 != null) {
+                sum += num1.data;
+                num1 = num1.next;
+            }
+
+            // If num2 linked list is not empty, add it to sum
+            if (num2 != null) {
+                sum += num2.data;
+                num2 = num2.next;
+            }
+          
+            // Create a new node with sum % 10 as its value
+            Node newNode = new Node(sum % 10);
+
+            // Store the carry for the next nodes
+            carry = sum / 10;
+
+            // If this is the first node, then make this node
+            // as the head of the resultant linked list
+            if (res == null) {
+                res = newNode;
+                curr = newNode;
+            } else {
+                // Append new node to resultant linked list
+                // and move to the next node
+                curr.next = newNode;
+                curr = curr.next;
+            }
+        }
+
+        // Reverse the resultant linked list to get the
+        // required linked list
+        return reverse(res);
+    }
+
+    static void printList(Node head) {
+        Node curr = head;
+        while (curr != null) {
+            System.out.print(curr.data + " ");
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        
+          // Creating first linked list: 1 -> 2 -> 3
+        // (represents 123)
+        Node num1 = new Node(1);
+        num1.next = new Node(2);
+        num1.next.next = new Node(3);
+
+        // Creating second linked list: 9 -> 9 -> 9
+        // (represents 999)
+        Node num2 = new Node(9);
+        num2.next = new Node(9);
+        num2.next.next = new Node(9);
+
+        Node sum = addTwoLists(num1, num2);
+        printList(sum);
+    }
+}
+
+/************************************************************************************************************/
+
+3.[Other Approach] Using Recursion – O(m + n) Time and O(max(m, n)) Space
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Java Program to add two numbers represented as
+// linked list by creating a new list
+
+class Node {
+    int data;
+    Node next;
+
+    Node(int val) {
+        data = val;
+        next = null;
+    }
+}
+
+class GfG {
+
+    // Function to reverse the linked list
+    static Node reverse(Node head) {
+        Node prev = null;
+        Node curr = head;
+        Node next;
+
+        while (curr != null) {
+            next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        return prev;
+    }
+    
+    // Function to trim leading zeros in linked list
+    static Node trimLeadingZeros(Node head) {
+        while (head != null && head.data == 0) {
+            head = head.next;
+        }
+        return head;
+    }
+
+    // Function to add two numbers represented by linked list
+    static Node addTwoLists(Node num1, Node num2) {
+        Node res = null;
+        Node curr = null;
+        int carry = 0;
+      
+        num1 = trimLeadingZeros(num1);
+        num2 = trimLeadingZeros(num2);
+      
+        num1 = reverse(num1);
+        num2 = reverse(num2);
+
+        // Iterate till either num1 is not empty or num2 is
+        // not empty or carry is greater than 0
+        while (num1 != null || num2 != null || carry != 0) {
+            int sum = carry;
+
+            // If num1 linked list is not empty, add it to sum
+            if (num1 != null) {
+                sum += num1.data;
+                num1 = num1.next;
+            }
+
+            // If num2 linked list is not empty, add it to sum
+            if (num2 != null) {
+                sum += num2.data;
+                num2 = num2.next;
+            }
+          
+            // Create a new node with sum % 10 as its value
+            Node newNode = new Node(sum % 10);
+
+            // Store the carry for the next nodes
+            carry = sum / 10;
+
+            // If this is the first node, then make this node
+            // as the head of the resultant linked list
+            if (res == null) {
+                res = newNode;
+                curr = newNode;
+            } else {
+                // Append new node to resultant linked list
+                // and move to the next node
+                curr.next = newNode;
+                curr = curr.next;
+            }
+        }
+
+        // Reverse the resultant linked list to get the
+        // required linked list
+        return reverse(res);
+    }
+
+    static void printList(Node head) {
+        Node curr = head;
+        while (curr != null) {
+            System.out.print(curr.data + " ");
+            curr = curr.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        
+          // Creating first linked list: 1 -> 2 -> 3
+        // (represents 123)
+        Node num1 = new Node(1);
+        num1.next = new Node(2);
+        num1.next.next = new Node(3);
+
+        // Creating second linked list: 9 -> 9 -> 9
+        // (represents 999)
+        Node num2 = new Node(9);
+        num2.next = new Node(9);
+        num2.next.next = new Node(9);
+
+        Node sum = addTwoLists(num1, num2);
+        printList(sum);
+    }
+}
+
+/**********************************************************************************************************/
