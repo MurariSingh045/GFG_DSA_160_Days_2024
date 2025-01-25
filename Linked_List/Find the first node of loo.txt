@@ -1,0 +1,173 @@
+Problem : Find the first node of loop in linked list
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/linked-list-gfg-160/problem/find-the-first-node-of-loop-in-linked-list--170645
+
+Problem Statement : Given a head of the singly linked list. If a loop is present in the list then return the first node of the loop else return NULL.
+
+Custom Input format:
+A head of a singly linked list and a pos (1-based index) which denotes the position of the node to which the last node points to. If pos = 0, it means the last node points to null, indicating there is no loop.
+
+Examples:
+
+Input:
+ 
+Output: 3
+Explanation: We can see that there exists a loop in the given linked list and the first node of the loop is 3.
+Input:
+ 
+Output: -1
+Explanation: No loop exists in the above linked list.So the output is -1.
+
+Constraints:
+1 <= no. of nodes <= 106
+1 <= node->data <= 106 
+
+/*****************************************************************************************************/
+
+[Naive approach] Using Hashing – O(n) Time and O(n) Space
+
+/////////////////////////////////////////////////////////////////////
+
+// Java program to find starting node 
+// of loop using Hasing
+
+import java.util.HashSet;
+
+class Node {
+    int data;
+    Node next;
+
+    Node(int x) {
+        data = x;
+        next = null;
+    }
+}
+
+// Function to detect a loop in the linked list and 
+// return the node where the cycle starts using HashSet
+class GfG {
+    static Node findFirstNode(Node head) {
+  
+        // HashSet to store visited nodes
+        HashSet<Node> st = new HashSet<>(); 
+        
+        Node currNode = head; 
+        
+        // Traverse the linked list
+        while (currNode != null) {
+          
+            // If the current node is already in the HashSet,
+            // then this is the starting node of the loop
+            if (st.contains(currNode)) {
+                return currNode;
+            }
+            
+            // If not, add the current node to the HashSet
+            st.add(currNode);
+            
+            // Move to the next node
+            currNode = currNode.next;
+        }
+        
+        // If no loop found, return null
+        return null;
+    }
+
+    public static void main(String[] args) {
+      
+        // Create a linked list: 10 -> 15 -> 4 -> 20
+        Node head = new Node(10);
+        head.next = new Node(15);
+        head.next.next = new Node(4);
+        head.next.next.next = new Node(20);
+
+        head.next.next.next.next = head;
+
+        Node loopNode = findFirstNode(head);
+
+        if (loopNode != null)
+            System.out.println(loopNode.data);
+        else
+            System.out.println(-1);
+    }
+}
+
+/********************************************************************************************************/
+
+[Expected Approach] Using Floyd’s loop detection algorithm – O(n) Time and O(1) Space
+
+///////////////////////////////////////////////////////////////////////////
+
+// Java program to return first node of loop.
+class Node {
+    int data;
+    Node next;
+
+    Node(int x) {
+        data = x;
+        next = null;
+    }
+}
+
+class GfG {
+  
+    // Function to detect a loop in the linked list and 
+    // return the node where the cycle starts 
+      // using Floyd’s Cycle-Finding Algorithm
+    static Node findFirstNode(Node head) {
+      
+        // Initialize two pointers, slow and fast
+        Node slow = head;
+        Node fast = head;
+
+        // Traverse the list
+        while (fast != null && fast.next != null) {
+          
+            // Move slow pointer by one step
+            slow = slow.next;
+
+            // Move fast pointer by two steps
+            fast = fast.next.next;
+
+            // Detect loop
+            if (slow == fast) {
+              
+                // Move slow to head, keep fast at meeting point
+                slow = head;
+
+                // Move both one step at a time until they meet
+                while (slow != fast) {
+                    slow = slow.next;
+                    fast = fast.next;
+                }
+
+                // Return the meeting node, which is the
+                  // start of the loop
+                return slow;
+            }
+        }
+
+        // No loop found
+        return null;
+    }
+
+    public static void main(String[] args) {
+      
+        // Create a linked list: 10 -> 15 -> 4 -> 20
+        Node head = new Node(10);
+        head.next = new Node(15);
+        head.next.next = new Node(4);
+        head.next.next.next = new Node(20);
+
+        head.next.next.next.next = head;
+
+        Node loopNode = findFirstNode(head);
+
+        if (loopNode != null)
+            System.out.println(loopNode.data);
+        else
+            System.out.println(-1);
+    }
+}
+
+/*************************************************************************************************************/
