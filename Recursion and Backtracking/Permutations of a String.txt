@@ -1,0 +1,228 @@
+Problem : Permutations of a String
+
+Problem link : https://www.geeksforgeeks.org/batch/gfg-160-problems/track/recursion-and-backtracking-gfg-160/problem/permutations-of-a-given-string2041
+
+Problem Statement : Given a string s, which may contain duplicate characters, your task is to generate and return an array of all unique permutations of the string. You can return your answer in any order.
+
+Examples:
+
+Input: s = "ABC"
+Output: ["ABC", "ACB", "BAC", "BCA", "CAB", "CBA"]
+Explanation: Given string ABC has 6 unique permutations.
+
+Input: s = "ABSG"
+Output: ["ABGS", "ABSG", "AGBS", "AGSB", "ASBG", "ASGB", "BAGS", "BASG", "BGAS", "BGSA", "BSAG", "BSGA", "GABS", "GASB", "GBAS", "GBSA", "GSAB", "GSBA", "SABG", "SAGB", "SBAG", "SBGA", "SGAB", "SGBA"]
+Explanation: Given string ABSG has 24 unique permutations.
+
+Input: s = "AAA"
+Output: ["AAA"]
+Explanation: No other unique permutations can be formed as all the characters are same.
+
+Constraints:
+1 <= s.size() <= 9
+s contains only Uppercase english alphabets
+
+Company Tags
+1.Zoho 2.Accolite 3.Amazon 4.Microsoft 5.OYO Rooms 6.Samsung 7.Snapdeal 8.Citrix 9.Walmart 1.MAQ Software 12.Cisco
+
+/************************************************************************************************************/
+
+1.[Naive Approach] Generating All Permutations
+
+Time Complexity: O(n*n!), where n is the size of the array.
+Auxiliary Space: O(n!), space used by hash set.
+
+////////////////////////////////////////////////////////
+
+// Java program to print unique permutation of string using hash set.
+
+import java.util.ArrayList;
+import java.util.HashSet;
+
+class GfG {
+  
+    // Function genPermutation is used to generate all possible permutation.
+    static void genPermutation(int i, String s, boolean[] used, 
+                                StringBuilder curr, HashSet<String> st) {
+        if (i == s.length()) {
+            // Add the permutation to the result set
+            st.add(curr.toString());
+            return;
+        }
+
+        for (int j = 0; j < s.length(); j++) {
+            if (!used[j]) {
+                // Mark the character as used
+                used[j] = true;
+                curr.append(s.charAt(j));
+                
+                // Recur with the next character
+                genPermutation(i + 1, s, used, curr, st);
+                
+                // Backtrack and unmark the character
+                used[j] = false;
+                curr.deleteCharAt(curr.length() - 1);
+            }
+        }
+    }
+
+    static ArrayList<String> findPermutation(String s) {
+      
+        // To track if a character is used
+        boolean[] used = new boolean[s.length()];
+        HashSet<String> st = new HashSet<>();
+        StringBuilder curr = new StringBuilder();
+
+        // Start the recursion
+        genPermutation(0, s, used, curr, st);
+
+        // Convert the set to a list
+        return new ArrayList<>(st);
+    }
+
+    public static void main(String[] args) {
+        String s = "ABC";
+        ArrayList<String> res = findPermutation(s);
+
+        // Print the permutations
+        for (String perm : res) {
+            System.out.print(perm + " ");
+        }
+    }
+}
+
+/****************************************************************************************************/
+
+2.[Expected Approach] Generating Only Unique Permutations
+
+Time Complexity: O(n*n!), In worst case all characters were unique, so it take time equal to generating all permutations.
+Auxiliary Space: O(n), used by temporary string and hash map.
+ 
+
+//////////////////////////////////////////////////////////////////////
+
+//Java program to print unique permutation of string 
+//using hash map.
+import java.util.*;
+
+class GfG {
+    // Recursive function to generate permutations
+     static void genPermutations(int n, StringBuilder curr, 
+                          Map<Character, Integer> cnt, List<String> res) {
+        
+       // Base case: If the current permutation length equals 
+       // to the input string length, add it to the result
+        if (curr.length() == n) {
+            res.add(curr.toString());
+            return;
+        }
+
+        // Iterate through each character in the frequency map
+        for (Map.Entry<Character, Integer> entry : cnt.entrySet()) {
+            char c = entry.getKey();
+            int count = entry.getValue();
+
+            // Skip characters with a count of 0
+            if (count == 0) 
+                continue;
+
+            // Include the character in the current permutation
+            curr.append(c);
+
+            // Decrease its count in the frequency map
+            cnt.put(c, count - 1);
+
+            // Recur to build the next character in the permutation
+            genPermutations(n, curr, cnt, res);
+
+            // Backtrack: Remove the character and restore its count
+            curr.deleteCharAt(curr.length() - 1);
+            cnt.put(c, count);
+        }
+    }
+
+     // Function to find all unique permutations of the input string
+     static ArrayList<String> findPermutation(String s) {
+        ArrayList<String> res = new ArrayList<>(); 
+       
+           // Frequency map to count occurrences of each character
+        Map<Character, Integer> cnt = new HashMap<>(); 
+
+        // Populate the frequency map with the characters of the input string
+        for (char c : s.toCharArray()) 
+            cnt.put(c, cnt.getOrDefault(c, 0) + 1);
+
+        // To build permutations
+        StringBuilder curr = new StringBuilder();
+        genPermutations(s.length(), curr, cnt, res);
+        return res;
+    }
+
+    public static void main(String[] args) {
+        String s = "ABC";
+        List<String> res = findPermutation(s);
+
+        for (String perm : res) 
+            System.out.print(perm + " ");
+    }
+}
+
+/*************************************************************************************************/
+
+3.we can solve it using backtracking and HashSet
+
+TC : O(n x n!)
+SC : O(N) for recursion stack + O(n!) for storing permutations
+
+///////////////////////////////////////////////////////////////////
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+public class UniquePermutations {
+    // Helper method for generating permutations
+    private static void backtrack(StringBuilder str, int index, HashSet<String> uniquePermutations) {
+        if (index == str.length()) {
+            uniquePermutations.add(str.toString());
+            return;
+        }
+
+        for (int i = index; i < str.length(); i++) {
+            swap(str, index, i); // Swap characters
+            backtrack(str, index + 1, uniquePermutations); // Recurse
+            swap(str, index, i); // Backtrack
+        }
+    }
+
+    // Utility method to swap characters in a StringBuilder
+    private static void swap(StringBuilder s, int i, int j) {
+        char temp = s.charAt(i);
+        s.setCharAt(i, s.charAt(j));
+        s.setCharAt(j, temp);
+    }
+
+    // Main method to find all unique permutations
+    public static List<String> findUniquePermutations(String s) {
+        HashSet<String> uniquePermutations = new HashSet<>();
+        backtrack(new StringBuilder(s), 0, uniquePermutations);
+        return new ArrayList<>(uniquePermutations); // Convert set to list
+    }
+
+    // Main method for testing
+    public static void main(String[] args) {
+        // Example 1
+        String input1 = "ABC";
+        System.out.println(findUniquePermutations(input1));
+
+        // Example 2
+        String input2 = "ABSG";
+        System.out.println(findUniquePermutations(input2));
+
+        // Example 3
+        String input3 = "AAA";
+        System.out.println(findUniquePermutations(input3));
+    }
+}
+
+/********************************************************************************************************/
