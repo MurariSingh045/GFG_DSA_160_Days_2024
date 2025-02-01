@@ -1,0 +1,145 @@
+Problem : Word Search
+
+Problem link : https://www.geeksforgeeks.org/problems/word-search/1
+
+Problem Statement : You are given a two-dimensional mat[][] of size n*m containing English alphabets and a string word. Check if the word exists on the mat. The word can be constructed by using letters from adjacent cells, either horizontally or vertically. The same cell cannot be used more than once.
+
+Examples :
+
+Input: mat[][] = [['T', 'E', 'E'], ['S', 'G', 'K'], ['T', 'E', 'L']], word = "GEEK"
+Output: true
+Explanation:
+
+The letter cells which are used to construct the "GEEK" are colored.
+Input: mat[][] = [['T', 'E', 'U'], ['S', 'G', 'K'], ['T', 'E', 'L']], word = "GEEK"
+Output: false
+Explanation:
+
+It is impossible to construct the string word from the mat using each cell only once.
+Input: mat[][] = [['A', 'B', 'A'], ['B', 'A', 'B']], word = "AB"
+Output: true
+Explanation:
+
+There are multiple ways to construct the word "AB".
+
+Constraints:
+1 ≤ n, m ≤ 6
+1 ≤ L ≤ 15
+mat and word consists of only lowercase and uppercase English letters.
+
+Company Tags
+1.Amazon 2.Microsoft 3.Intuit 4.Apple
+
+/*****************************************************************************************************/
+
+1. we can solve it using Recursion and Backtracking
+
+ TC :Time Complexity: O(n * m * 3wLen)
+SC : O(wLen)
+
+///////////////////////////////////////////////////////////////////////////////////////
+
+//{ Driver Code Starts
+import java.io.*;
+import java.util.*;
+
+class GFG {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int tc = sc.nextInt(); // Number of test cases
+        while (tc-- > 0) {
+            int n = sc.nextInt();
+            int m = sc.nextInt();
+            char[][] mat = new char[n][m];
+
+            // Reading the matrix
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    mat[i][j] = sc.next().charAt(0);
+                }
+            }
+
+            String word = sc.next();
+            Solution obj = new Solution();
+            boolean ans = obj.isWordExist(mat, word);
+            if (ans)
+                System.out.println("true");
+            else
+                System.out.println("false");
+
+            System.out.println("~");
+        }
+        sc.close();
+    }
+}
+// } Driver Code Ends
+
+
+class Solution {
+    static boolean findMatch(char[][] mat , String word , int x , int y 
+    , int wIdx){
+        int wLen = word.length();
+        int n = mat.length;
+        int m = mat[0].length;
+        // pattern matched
+        if(wIdx == wLen){
+            return true;
+        }
+        
+        // out of boundary 
+        if( x >= n || y >= m || x < 0 || y < 0 ){
+            return false;
+        }
+        
+        // if the grid matches with a letter while recursion
+        if(mat[x][y] == word.charAt(wIdx)){
+            
+            // marking this cell is visited
+            char temp = mat[x][y];
+            mat[x][y] = '#';
+            
+            // finding rest of the word in 4 direction
+            boolean res = findMatch(mat , word , x+1 , y , wIdx+1)||
+             findMatch(mat , word , x-1 , y , wIdx+1)||
+             findMatch(mat , word , x , y+1 , wIdx+1)||
+             findMatch(mat , word , x , y-1 , wIdx+1);
+             
+             // marking this cell unvisited again
+             mat[x][y] = temp;
+             return res;
+        }
+        // no matching then return false
+        return false;
+    }
+    static public boolean isWordExist(char[][] mat, String word) {
+        
+        int wLen = word.length(); // size of word String
+        int n = mat.length;
+        int m = mat[0].length;
+        
+        // edge case 
+        // if the total character in matrix less than word length
+        // then return false
+        if(wLen > n*m) return false;
+        
+        // run nestde loop in grid to find first word
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                
+                // if the first letter is match then call recursive function
+                // call findMatch
+                if(mat[i][j] == word.charAt(0)){
+                    if(findMatch(mat , word , i , j , 0)){
+                        return true;
+                    }
+                }
+                
+            }
+        }
+        // if no first letter match return false
+        return false;  // TC : O(n*m*3^wLen) // SC : O(wLen)
+    
+    }
+}
+
+/***************************************************************************************************************/
