@@ -1,0 +1,210 @@
+Problem : Height of Binary Tree
+
+Problem link : https://www.geeksforgeeks.org/problems/height-of-binary-tree/1
+
+Problem Statement : Given a binary tree, find its height.
+
+The height of a tree is defined as the number of edges on the longest path from the root to a leaf node. A leaf node is a node that does not have any children.
+
+Examples:
+
+Input: root[] = [12, 8, 18, 5, 11] 
+ 
+Output: 2
+Explanation: One of the longest path from the root (node 12) goes through node 8 to node 5, which has 2 edges.
+Input: root[] = [1, 2, 3, 4, N, N, 5, N, N, 6, 7]  
+
+Output: 3
+Explanation: The longest path from the root (node 1) to a leaf node 6 with 3 edge.
+Constraints:
+1 <= number of nodes <= 105
+0 <= node->data <= 105
+
+Company Tags
+1.VMWare 2.Zoho 3.Amazon 4.Microsoft 5.Snapdeal 6.D-E-Shaw 7.FactSet 8.MakeMyTrip 9.Teradata 10.Synopsys 11.CouponDunia 12.Cadence India 13.Monotype Solutions 14.FreeCharge
+
+/******************************************************************************************************
+
+1. We can solve this problem using  Recursion 
+
+// TC : O(N)
+   SC : O(H) .. H = Height of tree
+
+////////////////////////////////////////////////////////////////
+
+class Solution {
+    // Function to find the height of a binary tree.
+    int height(Node node) {
+        
+        // We are solving it using Recursion
+        // if root is null
+        // base case or ternmination case
+      if(node == null) return -1;
+        
+        //  recursive case
+        // calling height fun() for left child
+        int leftHeight = height(node.left); 
+        // calling height fun() for right child
+        int rightHeight = height(node.right);
+        
+        // return max + 1 
+        return 1+Math.max(leftHeight , rightHeight);
+        
+        // TC : O(N)  // SC : O(Height)
+    }
+}
+
+/********************************************************************************************************/
+
+2.[Approach 2] Level Order Traversal using Null Delimiter – O(n) Time and O(n) Space
+
+/////////////////////////////////////////////////////////////////////
+
+// Java program to find the height of a binary 
+// tree using level order traversal approach.
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val) {
+        data = val;
+        left = null;
+        right = null;
+    }
+}
+
+class GfG {
+
+   // Function to find the height of the tree
+    static int height(Node root) {
+        if (root == null) return 0;
+
+        // Initializing a variable to count 
+        // the depth of the tree
+        int depth = 0;
+
+        Queue<Node> q = new LinkedList<>();
+
+        // Pushing the first level element 
+        // along with null
+        q.add(root);
+        q.add(null);
+
+        while (!q.isEmpty()) {
+            Node curr = q.poll();
+
+            // When null is encountered, update the depth
+            if (curr == null) {
+                depth++;
+
+                // If queue still has elements left, 
+                // push null again to the queue
+                if (!q.isEmpty()) {
+                    q.add(null);
+                }
+            } 
+            else {
+
+                // If null is not encountered, 
+                // keep moving
+                if (curr.left != null) q.add(curr.left);
+                if (curr.right != null) q.add(curr.right);
+            }
+        }
+        return depth - 1;
+    }
+
+    public static void main(String[] args) {
+
+        // Representation of the input tree:
+        //     12
+        //    /  \
+        //   8   18
+        //  / \
+        // 5   11
+        Node root = new Node(12);
+        root.left = new Node(8);
+        root.right = new Node(18);
+        root.left.left = new Node(5);
+        root.left.right = new Node(11);
+
+        System.out.println(height(root));
+    }
+}
+
+
+/**********************************************************************************************************/
+
+3.[Approach 3] Level Order Traversal without using Null Delimiter – O(n) Time and O(n) Space
+
+//////////////////////////////////////////////////////////////////////////
+
+// Java program to find the height of a binary 
+// tree using level order traversal
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val) {
+        data = val;
+        left = null;
+        right = null;
+    }
+}
+
+class GfG {
+  
+  // Function to find the height of the tree
+    static int height(Node root) {
+        if (root == null) return 0;
+
+        // Initializing a queue to traverse
+        // the tree level by level
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+        int depth = 0;
+
+        // Loop until the queue is empty
+        while (!q.isEmpty()) {
+            int levelSize = q.size();
+
+            // Traverse all nodes at the current level
+            for (int i = 0; i < levelSize; i++) {
+                Node curr = q.poll();
+
+                if (curr.left != null) q.add(curr.left);
+                if (curr.right != null) q.add(curr.right);
+            }
+
+            // Increment height after traversing each level
+            depth++;
+        }
+        return depth - 1;
+    }
+
+    public static void main(String[] args) {
+
+        // Representation of the input tree:
+        //     12
+        //    /  \
+        //   8   18
+        //  / \
+        // 5   11
+        Node root = new Node(12);
+        root.left = new Node(8);
+        root.right = new Node(18);
+        root.left.left = new Node(5);
+        root.left.right = new Node(11);
+
+        System.out.println(height(root));
+    }
+}
+
+
+/*********************************************************************************************************/
