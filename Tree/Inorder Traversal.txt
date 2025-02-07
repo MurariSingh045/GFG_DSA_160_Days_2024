@@ -1,0 +1,119 @@
+Problem : Inorder Traversal
+
+Problem link : https://www.geeksforgeeks.org/problems/inorder-traversal/1
+
+Problem Statement : Given a Binary Tree, your task is to return its In-Order Traversal.
+
+An inorder traversal first visits the left child (including its entire subtree), then visits the node, and finally visits the right child (including its entire subtree).
+
+Examples:
+
+Input: root[] = [1, 2, 3, 4, 5] 
+      
+Output: [4, 2, 5, 1, 3]
+Explanation: The in-order traversal of the given binary tree is [4, 2, 5, 1, 3].
+Input: root[] = [8, 1, 5, N, 7, 10, 6, N, 10, 6]
+      
+Output: [1, 7, 10, 8, 6, 10, 5, 6]
+Explanation: The in-order traversal of the given binary tree is [1, 7, 10, 8, 6, 10, 5, 6].
+Constraints:
+1 <= number of nodes <= 105
+0 <= node->data <= 105
+
+Company Tags
+1.Amazon 2.Snapdeal 3.Adobe
+
+/************************************************************************************************************/
+
+ we can solve this problem using :  Morris traversal for Inorder   
+
+
+Time Complexity: O(n), if we take a closer look, we can notice that every edge of the tree is traversed at most three times.
+Auxiliary Space: O(1), as we are using only constant variables.
+ 
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// Java code to print Inorder Traversal
+// of Binary Tree using Morris Traversal
+import java.util.*;
+
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int x) {
+        data = x;
+        left = right = null;
+    }
+}
+
+class GfG {
+
+    // Function for inorder traversal 
+    // using Morris Traversal
+    static ArrayList<Integer> inOrder(Node root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        Node curr = root;
+
+        while (curr != null) {
+            if (curr.left == null) {
+              
+                // If no left child, visit this node 
+                // and go right
+                res.add(curr.data);
+                curr = curr.right;
+            } 
+            else {
+              
+                // Find the inorder predecessor of curr
+                Node prev = curr.left;
+                while (prev.right != null && 
+                                   prev.right != curr) {
+                    prev = prev.right;
+                }
+
+                // Make curr the right child of its 
+                // inorder predecessor
+                if (prev.right == null) {
+                    prev.right = curr;
+                    curr = curr.left;
+                } 
+                else {
+                  
+                    // Revert the changes made in 
+                    // the tree structure
+                    prev.right = null;
+                    res.add(curr.data);
+                    curr = curr.right;
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+
+        // Representation of input binary tree:
+        //           1
+        //          / \
+        //         2   3
+        //        / \  
+        //       4   5
+        Node root = new Node(1);
+        root.left = new Node(2);
+        root.right = new Node(3);
+        root.left.left = new Node(4);
+        root.left.right = new Node(5);
+
+        ArrayList<Integer> res = inOrder(root);
+
+         for (int data : res) {
+            System.out.print(data + " ");
+        }
+    }
+}
+
+
+/***************************************************************************************************************/
+
