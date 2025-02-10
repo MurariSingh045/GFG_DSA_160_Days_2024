@@ -1,0 +1,127 @@
+Problem : K Sum Paths
+
+Problem link : https://www.geeksforgeeks.org/problems/k-sum-paths/1
+
+Problem Statement : Given a binary tree and an integer k, determine the number of downward-only paths where the sum of the node values in the path equals k. A path can start and end at any node within the tree but must always move downward (from parent to child).
+
+Examples:
+
+Input: k = 7   
+
+Output: 3
+Explanation: The following paths sum to k 
+ 
+Input: k = 3
+
+Output: 2
+Explanation:
+Path 1 : 1 -> 2 (Sum = 3)
+Path 2 : 3 (Sum = 3)
+
+
+Constraints:
+
+1 ≤ number of nodes ≤ 104
+-100 ≤ node value ≤ 100
+-109 ≤ k ≤ 109
+
+Company Tags
+1.Flipkart 2.Amazon 3.Walmart
+
+/************************************************************************************************************/
+
+[Naive Approach] By Exploring All Possible Paths – O(n^2) Time and O(h) Space
+
+/**********************************************************************************
+
+static int countPathsFromNode(Node node, int k, int currentSum) {
+        if (node == null)
+            return 0;
+
+        int pathCount = 0;
+
+        // Update the current sum
+        currentSum += node.data;
+
+        // If current sum equals k, increment path count
+        if (currentSum == k)
+            pathCount++;
+
+        // Recur for the left and right subtree
+        pathCount += countPathsFromNode(node.left, k, currentSum);
+        pathCount += countPathsFromNode(node.right, k, currentSum);
+
+        return pathCount;
+    }
+
+    // Function to count all paths that sum to k in the binary tree
+    static int countAllPaths(Node root, int k) {
+        if (root == null)
+            return 0;
+
+        // Count all paths starting from the current node
+        int res = countPathsFromNode(root, k, 0);
+
+        // Recur for the left and right subtree
+        res += countAllPaths(root.left, k);
+        res += countAllPaths(root.right, k);
+
+        return res;
+    }
+
+/************************************************************************************************/
+
+[Expected Approach] Using Prefix Sum Technique – O(n) Time and O(n) Space
+
+////////////////////////////////////////////////////////////////////
+
+class Solution {
+    int countPath(Node root , int k ,int currSum ,HashMap<Integer , Integer> prefSum  ){
+        
+        // base case 
+        if(root == null) return 0;
+        
+        // Recursive Case
+        int pathCount = 0; // initially count is 0
+        
+        // adding current root value to currSum
+        currSum += root.data;
+        
+        // if current Sum equals to k increment count
+        if(currSum == k) pathCount++;
+        
+        if(prefSum.containsKey(currSum - k)){
+            
+            pathCount += prefSum.getOrDefault(currSum-k , 0);
+        }
+        
+        // add current Sum and their frequency
+        prefSum.put(currSum , prefSum.getOrDefault(currSum , 0)+1);
+        
+        // recursively call countPath function for left node
+        pathCount += countPath(root.left , k , currSum ,prefSum );
+        
+        // recursively call countPath function for right node
+        pathCount += countPath(root.right , k , currSum ,prefSum );
+        
+        // if we are changing the path remove currentSum and its 
+        // frequency from HashMap
+        
+        prefSum.put(currSum , prefSum.get(currSum)-1);
+        
+        // return path count
+        return pathCount;
+        
+    }
+    public int sumK(Node root, int k) {
+       
+       // create a Map to store currentSum and its frequency
+       HashMap<Integer , Integer> prefSum = new HashMap<>(); 
+       
+       // initially we are giving currSum value = 0.
+      return countPath(root , k , 0 , prefSum);
+        
+    }
+}
+
+/*************************************************************************************************/
