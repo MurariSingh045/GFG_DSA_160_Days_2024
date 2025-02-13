@@ -1,0 +1,165 @@
+Problem : Pair Sum in BST(Medium)
+
+Problem link :https://www.geeksforgeeks.org/problems/find-a-pair-with-given-target-in-bst/1
+
+Problem Statement : Given a Binary Search Tree(BST) and a target. Check whether there's a pair of Nodes in the BST with value summing up to the target. 
+
+Examples:
+
+Input: root = [7, 3, 8, 2, 4, N, 9], target = 12
+       bst
+Output: True
+Explanation: In the binary tree above, there are two nodes (8 and 4) that add up to 12.
+Input: root = [9, 5, 10, 2, 6, N, 12], target = 23
+          bst-3
+Output: False
+Explanation: In the binary tree above, there are no such two nodes exists that add up to 23.
+Constraints:
+
+1 ≤ Number of Nodes ≤ 105
+1 ≤ target ≤ 106
+
+Company Tags
+1.VMWare 2.Flipkart 3.Amazon 4.Microsoft 5.OYO Rooms 6.Snapdeal
+
+/********************************************************************************************************/
+
+[Naive Approach] Check Compliment for Every node – O(n * h) Time and O(h) Space
+
+////////////////////////////////////////////////////////////////////////
+
+  // Function to search for the Key in the BST
+    static boolean search(Node root, int key, Node temp) {
+        // If the root is NULL, return false
+        if (root == null)
+            return false;
+
+        // Start search from the root
+        Node current = root;
+
+        // Traverse the BST to find the target value `key`
+        while (current != null) {
+            // If Key is found
+            if (current.data == key && current != temp)
+                return true;
+
+            // If key is smaller, move to the left
+            else if (key < current.data)
+                current = current.left;
+
+            // If key is larger, move to the right
+            else
+                current = current.right;
+        }
+
+        // Return false if no match is found
+        return false;
+    }
+
+    // Helper Function to find if there exists a pair 
+    // with a given sum in the BST
+    static boolean findTargetRec(Node root, Node current, int target) {
+        if (current == null)
+            return false;
+
+        // Check if the complement of the current node value exists
+        int complement = target - current.data;
+        if (search(root, complement, current))
+            return true;
+
+        // Check for the pair in left and right subtree
+        return findTargetRec(root, current.left, target) ||
+               findTargetRec(root, current.right, target);
+    }
+
+    // Function to find if there exists a pair 
+    // with a given sum in the BST
+    static boolean findTarget(Node root, int target) {
+        return findTargetRec(root, root, target);
+    }
+
+
+/************************************************************************************************************/
+
+[Expected approach] Using Inorder Traversal – O(n) Time and O(n) Space
+
+////////////////////////////////////////////////////////////
+
+ // Function to perform Inorder traversal and store the 
+    // elements in an array
+    static void inorderTraversal(Node root, ArrayList<Integer> inorder) {
+        if (root == null)
+            return;
+
+        inorderTraversal(root.left, inorder);
+
+        // Store the current node's value
+        inorder.add(root.data);
+
+        inorderTraversal(root.right, inorder);
+    }
+
+    // Function to find if there exists a pair with a 
+    // given sum in the BST
+    static boolean findTarget(Node root, int target) {
+      
+        // Create an auxiliary array and store Inorder traversal
+        ArrayList<Integer> inorder = new ArrayList<>();
+        inorderTraversal(root, inorder);
+
+        // Use two-pointer technique to find the pair with given sum
+        int left = 0, right = inorder.size() - 1;
+
+        while (left < right) {
+            int currentSum = inorder.get(left) + inorder.get(right);
+
+            // If the pair is found, return true
+            if (currentSum == target)
+                return true;
+
+            // If the current sum is less than the target, 
+            // move the left pointer
+            if (currentSum < target)
+                left++;
+          
+            // If the current sum is greater than 
+            // the target, move the right pointer
+            else
+                right--;
+        }
+
+        return false;
+    }
+
+/*********************************************************************************************************/
+
+[Expected Approach 1] Using Hash Set – O(n) time and O(n) space
+
+//////////////////////////////////////////////////////////
+
+  // Helper function to perform DFS and check
+    // for the required target.
+    static boolean dfs(Node root, HashSet<Integer> set, int target) {
+        if (root == null)
+            return false;
+
+        // Check if the complement (target - current node's value)
+        // exists in the set
+        if (set.contains(target - root.data))
+            return true;
+
+        // Insert the current node's value into the set
+        set.add(root.data);
+
+        // Continue the search in the left and right subtrees
+        return dfs(root.left, set, target) || dfs(root.right, set, target);
+    }
+
+    // Main function to check if two elements
+    // in the BST target to target
+    static boolean findTarget(Node root, int target) {
+        HashSet<Integer> set = new HashSet<>();
+        return dfs(root, set, target);
+    }
+
+/*************************************************************************************************************/
