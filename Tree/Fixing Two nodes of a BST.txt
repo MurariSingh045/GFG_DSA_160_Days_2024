@@ -1,0 +1,266 @@
+Problem : Fixing Two nodes of a BST
+
+Problem link : https://www.geeksforgeeks.org/problems/fixed-two-nodes-of-a-bst/1
+
+Problem Statement : Given the root of a Binary search tree(BST), where exactly two nodes were swapped by mistake. Your task is to fix (or correct) the BST by swapping them back. Do not change the structure of the tree.
+Note: It is guaranteed that the given input will form BST, except for 2 nodes that will be wrong. All changes must be reflected in the original Binary search tree(BST).
+ 
+Examples :
+Input: root = [10, 5, 8, 2, 20]
+     
+Output: 1
+       
+
+Explanation: The nodes 20 and 8 were swapped. 
+Input: root = [5, 10, 20, 2, 8]
+     
+Output: 1 
+     
+Explanation: The nodes 10 and 5 were swapped.
+Constraints:
+1 ≤ Number of nodes ≤ 103
+
+Company Tags
+1.Amazon 2.Microsoft 3.FactSet 4.Walmart 5.BankBazaar
+
+/**********************************************************************************************************/
+
+[Naive Approach] Inorder Traversal and Sorting – O(n * log n) Time and O(n) Space
+
+////////////////////////////////////////////////////////////////////////////
+
+ // Function to store the inorder traversal of the tree in an array
+    static void findInorder(Node curr, ArrayList<Integer> inorder) {
+        if (curr == null) return;
+
+        // Recursively store left subtree
+        findInorder(curr.left, inorder);
+
+        // Store the current node's data
+        inorder.add(curr.data);
+
+        // Recursively store right subtree
+        findInorder(curr.right, inorder);
+    }
+
+    // Recursive function to correct the BST by replacing
+    // node values with sorted values
+    static void correctBSTUtil(Node root, ArrayList<Integer> inorder, 
+                                       int[] index) {
+        if (root == null) return;
+
+        // Recursively fill the left subtree
+        correctBSTUtil(root.left, inorder, index);
+
+        // Replace the current node's data with
+        // the correct value from the sorted array
+        root.data = inorder.get(index[0]);
+        index[0]++;
+
+        // Recursively fill the right subtree
+        correctBSTUtil(root.right, inorder, index);
+    }
+    
+      // Function to fix the given BST where two nodes are swapped.
+    static void correctBST(Node root) {
+      
+        // Array to store the inorder traversal of the tree
+        ArrayList<Integer> inorder = new ArrayList<>();
+        findInorder(root, inorder);
+
+        // Sort the array to get the correct order of
+        // elements in a BST
+        Collections.sort(inorder);
+
+        int[] index = {0};
+        correctBSTUtil(root, inorder, index);
+    }
+
+
+/*******************************************************************************************************/
+
+[Expected Approach] Using One Traversal – O(n) Time and O(h) Space
+
+///////////////////////////////////////////////////////////////////
+
+//{ Driver Code Starts
+import java.io.*;
+import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+
+class pair {
+    int first;
+    int second;
+
+    pair(int first, int second) {
+        this.first = first;
+        this.second = second;
+    }
+}
+
+class GfG {
+
+    static Node buildTree(String str) {
+        if (str.length() == 0 || str.charAt(0) == 'N') {
+            return null;
+        }
+
+        String ip[] = str.split(" ");
+        Node root = new Node(Integer.parseInt(ip[0]));
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        int i = 1;
+        while (queue.size() > 0 && i < ip.length) {
+            Node currNode = queue.peek();
+            queue.remove();
+
+            String currVal = ip[i];
+
+            if (!currVal.equals("N")) {
+                currNode.left = new Node(Integer.parseInt(currVal));
+                queue.add(currNode.left);
+            }
+
+            i++;
+            if (i >= ip.length) break;
+
+            currVal = ip[i];
+
+            if (!currVal.equals("N")) {
+                currNode.right = new Node(Integer.parseInt(currVal));
+                queue.add(currNode.right);
+            }
+            i++;
+        }
+
+        return root;
+    }
+
+    static boolean isBST(Node n, int lower, int upper) {
+        if (n == null) return true;
+        if (n.data <= lower || n.data >= upper) return false;
+        return isBST(n.left, lower, n.data) && isBST(n.right, n.data, upper);
+    }
+
+    static boolean compare(Node a, Node b, ArrayList<pair> mismatch) {
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+
+        if (a.data != b.data) {
+            mismatch.add(new pair(a.data, b.data));
+        }
+
+        return compare(a.left, b.left, mismatch) && compare(a.right, b.right, mismatch);
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        int t = Integer.parseInt(br.readLine());
+
+        while (t-- > 0) {
+            String s = br.readLine();
+            Node root = buildTree(s);
+            Node duplicate = buildTree(s);
+
+            Solution ob = new Solution();
+            ob.correctBST(root);
+
+            if (!isBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE)) {
+                System.out.println(0);
+                continue;
+            }
+
+            ArrayList<pair> mismatch = new ArrayList<>();
+            if (!compare(root, duplicate, mismatch)) {
+                System.out.println(0);
+                continue;
+            }
+
+            if (mismatch.size() != 2 ||
+                mismatch.get(0).first != mismatch.get(1).second ||
+                mismatch.get(0).second != mismatch.get(1).first) {
+                System.out.println(0);
+            } else {
+                System.out.println(1);
+            }
+
+            System.out.println("~");
+        }
+    }
+}
+
+// } Driver Code Ends
+
+
+/*
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+class Solution {
+    void bstUtil(Node root , Node[] first , Node[] middle , Node[] last
+    , Node[]  prev){
+        
+        if(root == null) return;
+        
+        bstUtil(root.left , first , middle , last , prev);
+        
+        if(prev[0] != null && root.data < prev[0].data){
+            
+            if(first[0] == null){
+                first[0] = prev[0];
+                middle[0] = root;
+            }
+            else last[0]  = root;
+        }
+        prev[0] = root;
+        
+        bstUtil(root.right , first , middle , last , prev);
+    }
+    void swap(Node a , Node b){
+        int temp = a.data;
+        a.data = b.data;
+        b.data = temp;
+    }
+    void correctBST(Node root) {
+        
+        Node[]  first = {null}, middle = {null},
+                last = {null} , prev = {null};
+                
+        bstUtil(root , first , middle , last ,prev);
+        
+        if(first[0] != null && last[0] != null){
+            swap(first[0] , last[0]);
+        }
+        else if(first[0] != null && middle[0] != null){
+            swap(first[0],middle[0]);
+        }
+    }
+}
+
+
+/**********************************************************************************************************/
