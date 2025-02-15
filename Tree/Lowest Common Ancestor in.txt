@@ -1,0 +1,114 @@
+Problem : Lowest Common Ancestor in a BST
+
+Problem link : https://www.geeksforgeeks.org/problems/lowest-common-ancestor-in-a-bst/1
+
+Problem Statement : Given a Binary Search Tree (with all values unique) and two nodes n1 and n2 (n1 != n2). You may assume that both nodes exist in the tree. Find the Lowest Common Ancestor (LCA) of the given two nodes in the BST.
+
+LCA between two nodes n1 and n2 is defined as the lowest node that has both n1 and n2 as descendants (where we allow a node to be a descendant of itself).
+
+Examples:
+
+Input: root = [5, 4, 6, 3, N, N, 7, N, N, N, 8], n1 = 7, n2 = 8
+        
+Output: 7
+Explanation: 7 is the closest node to both 7 and 8, which is also an ancestor of both the nodes.
+Input: root = [20, 8, 22, 4, 12, N, N, N, N, 10, 14], n1 = 8, n2 = 14
+                
+Output: 8
+Explanation: 8 is the closest node to both 8 and 14, which is also an ancestor of both the nodes.
+Input: root = [2, 1, 3], n1 = 1, n2 = 3
+        
+Output: 2
+Explanation: 2 is the closest node to both 1 and 3, which is also an ancestor of both the nodes.
+Constraints:
+1 <= number of nodes <= 105
+1 <= node->data <= 105
+1 <= n1, n2 <= 105
+
+Company Tags
+1.Flipkart 2.Accolite 3.Amazon 4.Microsoft 5.Samsung 6.MAQ Software 7.Synopsys
+
+/***************************************************************************************************************/
+
+Using BST Properties (Recursive Approach) – O(h) Time and O(h) Space
+
+//////////////////////////////////////////////////////////////////////
+
+  // Function to find LCA of nodes n1 and n2, assuming
+    // both are present in the BST
+    static Node LCA(Node root, Node n1, Node n2) {
+        if (root == null)
+            return null;
+
+        // If both n1 and n2 are smaller than root, 
+          // go to left subtree
+        if (root.data > n1.data && root.data > n2.data)
+            return LCA(root.left, n1, n2);
+
+        // If both n1 and n2 are greater than root, 
+          // go to right subtree
+        if (root.data < n1.data && root.data < n2.data)
+            return LCA(root.right, n1, n2);
+
+        // If nodes n1 and n2 are on the opposite sides, 
+          // root is the LCA
+        return root;
+    }
+
+
+/***************************************************************************************************************/
+
+Using BST Properties (Iterative Method) – O(h) Time and O(1) Space
+
+////////////////////////////////////////////////////////////////////
+
+ // Function to find LCA of n1 and n2, assuming
+    // that both nodes n1 and n2 are present in BST
+    static Node LCA(Node root, Node n1, Node n2) {
+      
+        while (root != null) {
+          
+            // If both n1 and n2 are smaller than root,
+            // then LCA lies in left
+            if (root.data > n1.data && root.data > n2.data)
+                root = root.left;
+
+            // If both n1 and n2 are greater than root,
+            // then LCA lies in right
+            else if (root.data < n1.data && root.data < n2.data)
+                root = root.right;
+
+            // Else Ancestor is found
+            else
+                break;
+        }
+      
+        return root;
+    }
+
+    public static void main(String[] args) {
+        // Representation of input BST:
+        //            20
+        //           /  \
+        //          8    22
+        //        /   \
+        //       4    12
+        //           /   \
+        //         10    14
+        Node root = new Node(20);
+        root.left = new Node(8);
+        root.right = new Node(22);
+        root.left.left = new Node(4);
+        root.left.right = new Node(12);
+        root.left.right.left = new Node(10);
+        root.left.right.right = new Node(14);
+
+        Node n1 = root.left.left; // Node 4
+        Node n2 = root.left.right.right; // Node 14
+
+        Node res = LCA(root, n1, n2);
+        System.out.println(res.data);
+    }
+}
+
+/************************************************************************************************************/S
